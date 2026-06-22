@@ -128,14 +128,15 @@ export default function HeroCanvas() {
     );
 
     // 7. Render Loop
-    let clock = new THREE.Clock();
+    let timer = new THREE.Timer();
     let animId;
 
-    const animate = () => {
+    const animate = (timestamp) => {
       animId = requestAnimationFrame(animate);
 
-      const delta = clock.getDelta();
-      const time = clock.getElapsedTime();
+      timer.update(timestamp);
+      const delta = timer.getDelta();
+      const time = timer.getElapsed();
 
       // Rotate elements
       globe.rotation.y += 0.002;
