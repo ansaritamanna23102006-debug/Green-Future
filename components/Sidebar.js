@@ -22,7 +22,8 @@ import {
   Lock,
   Wallet,
   Settings,
-  ShieldCheck
+  ShieldCheck,
+  ArrowDownToLine
 } from "lucide-react";
 import { useApp } from "@/lib/context/AppContext";
 import GFTLogo from "./GFTLogo";
@@ -78,6 +79,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
     },
     { name: "My Packages", href: "/dashboard/packages", icon: Gift },
     { name: "GFT Tokens", href: "/dashboard/tokens", icon: Coins },
+    { name: "Withdrawal", href: "/dashboard/withdraw", icon: ArrowDownToLine },
     { name: "Offers & Promos", href: "/dashboard/offers", icon: Compass },
     { name: "Company Docs", href: "/dashboard/documents", icon: FileText },
     { name: "Support Tickets", href: "/dashboard/support", icon: HelpCircle },
