@@ -255,21 +255,25 @@ export default function DashboardPage() {
             <p className="text-xs text-gft-deep/45 mt-0.5">Aggregated Direct & Team commission payouts.</p>
           </div>
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyIncomeData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="incomeGrad" cx="0" cy="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#65B300" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#65B300" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
-                <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
-                <Area type="monotone" dataKey="income" stroke="#65B300" strokeWidth={2} fillOpacity={1} fill="url(#incomeGrad)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={monthlyIncomeData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="incomeGrad" cx="0" cy="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#65B300" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#65B300" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
+                  <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
+                  <Area type="monotone" dataKey="income" stroke="#65B300" strokeWidth={2} fillOpacity={1} fill="url(#incomeGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />
+            )}
           </div>
         </div>
 
@@ -280,15 +284,19 @@ export default function DashboardPage() {
             <p className="text-xs text-gft-deep/45 mt-0.5">Cumulative direct & indirect wing placement count.</p>
           </div>
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={teamGrowthData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
-                <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
-                <Line type="monotone" dataKey="members" stroke="#0A4D45" strokeWidth={2.5} activeDot={{ r: 6 }} />
-              </LineChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={teamGrowthData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
+                  <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
+                  <Line type="monotone" dataKey="members" stroke="#0A4D45" strokeWidth={2.5} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />
+            )}
           </div>
         </div>
 
@@ -299,15 +307,19 @@ export default function DashboardPage() {
             <p className="text-xs text-gft-deep/45 mt-0.5">Tokens distributed from self and team staking actions.</p>
           </div>
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={tokenGrowthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
-                <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
-                <Bar dataKey="tokens" fill="#8CD83D" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={tokenGrowthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
+                  <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
+                  <Bar dataKey="tokens" fill="#8CD83D" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />
+            )}
           </div>
         </div>
       </div>

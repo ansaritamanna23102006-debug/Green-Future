@@ -1,12 +1,17 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Coins, TrendingUp, Download, Eye, ShieldCheck, ArrowUpRight } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { useApp } from "@/lib/context/AppContext";
 
 export default function TokensPage() {
   const { user } = useApp();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const mockTokenTrend = [
     { name: "Week 1", yield: 2400 },
@@ -97,21 +102,25 @@ export default function TokensPage() {
           </div>
 
           <div className="h-64 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={mockTokenTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="tokenGrad" cx="0" cy="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#8CD83D" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#8CD83D" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
-                <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
-                <Area type="monotone" dataKey="yield" stroke="#8CD83D" strokeWidth={2.5} fillOpacity={1} fill="url(#tokenGrad)" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {mounted ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mockTokenTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="tokenGrad" cx="0" cy="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#8CD83D" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#8CD83D" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
+                  <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <YAxis stroke="#0A4D45" fontSize={10} tickLine={false} />
+                  <Tooltip contentStyle={{ background: "#062F2D", color: "#FFF", borderRadius: 8, border: "none" }} />
+                  <Area type="monotone" dataKey="yield" stroke="#8CD83D" strokeWidth={2.5} fillOpacity={1} fill="url(#tokenGrad)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />
+            )}
           </div>
         </div>
 

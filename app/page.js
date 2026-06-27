@@ -25,114 +25,6 @@ import HeroCanvas from "@/components/HeroCanvas";
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Startup Loader Component (Fractal tree drawing on canvas)
-function StartupLoader({ onComplete }) {
-  const canvasRef = useRef(null);
-  const containerRef = useRef(null);
-
-  useEffect(() => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    let animId;
-    let growth = 0;
-    
-    // Draw fractal branch network
-    const drawBranch = (startX, startY, len, angle, branchWidth) => {
-      ctx.beginPath();
-      ctx.save();
-      ctx.strokeStyle = "#8cd83d"; // GFT Accent Green
-      ctx.shadowColor = "#65b300";
-      ctx.shadowBlur = 10;
-      ctx.lineWidth = branchWidth;
-      ctx.translate(startX, startY);
-      ctx.rotate((angle * Math.PI) / 180);
-      ctx.moveTo(0, 0);
-      ctx.lineTo(0, -len * growth);
-      ctx.stroke();
-      
-      if (len < 12) {
-        ctx.beginPath();
-        ctx.arc(0, -len, 3, 0, Math.PI * 2);
-        ctx.fillStyle = "#65b300";
-        ctx.fill();
-        ctx.restore();
-        return;
-      }
-      
-      drawBranch(0, -len, len * 0.75, angle + 22, branchWidth * 0.7);
-      drawBranch(0, -len, len * 0.75, angle - 22, branchWidth * 0.7);
-      
-      ctx.restore();
-    };
-    
-    const animate = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawBranch(canvas.width / 2, canvas.height - 40, 90, 0, 7);
-      
-      if (growth < 1) {
-        growth += 0.02;
-        animId = requestAnimationFrame(animate);
-      } else {
-        setTimeout(() => {
-          gsap.to(containerRef.current, {
-            opacity: 0,
-            duration: 0.6,
-            ease: "power2.out",
-            onComplete: onComplete
-          });
-        }, 600);
-      }
-    };
-    
-    animate();
-    
-    const handleResize = () => {
-      if (!canvas) return;
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    };
-    window.addEventListener("resize", handleResize);
-    
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animId);
-    };
-  }, [onComplete]);
-
-  return (
-    <div
-      ref={containerRef}
-      className="fixed inset-0 bg-[#031412] z-50 flex flex-col justify-center items-center select-none"
-    >
-      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full pointer-events-none" />
-      <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-        <div className="w-18 h-18 rounded-full border border-gft-accent/20 flex items-center justify-center bg-gft-dark-bg glow-green">
-          <svg className="h-9 w-auto animate-pulse" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M50 15C50 15 25 35 25 60C25 75 35 85 50 85C50 85 50 50 50 15Z" fill="#0A4D45" />
-            <path d="M50 15C50 15 75 35 75 60C75 75 65 85 50 85C50 85 50 50 50 15Z" fill="#65B300" />
-            <path d="M50 40C50 40 65 52.5 65 65C65 72.5 60 77.5 50 77.5C50 77.5 50 55 50 40Z" fill="#8CD83D" opacity="0.85" />
-            <circle cx="50" cy="15" r="5" fill="#FFFFFF" />
-            <circle cx="25" cy="60" r="5" fill="#8CD83D" />
-            <circle cx="75" cy="60" r="5" fill="#8CD83D" />
-            <circle cx="50" cy="85" r="5" fill="#FFFFFF" />
-          </svg>
-        </div>
-        <div className="flex flex-col leading-none">
-          <span className="text-lg font-bold tracking-wider text-white">GREEN FUTURE</span>
-          <span className="text-[10px] font-semibold tracking-[0.25em] text-gft-primary mt-1">TECHNOLOGY</span>
-        </div>
-        <span className="text-[9px] text-white/40 tracking-widest uppercase font-semibold animate-pulse mt-4">
-          Booting Blockchain Tree...
-        </span>
-      </div>
-    </div>
-  );
-}
 
 // Count Up Component using GSAP
 function CountUp({ end, duration = 1.5, suffix = "", prefix = "" }) {
@@ -206,7 +98,6 @@ function FAQItem({ question, answer, isOpen, toggleOpen }) {
 }
 
 export default function LandingPage() {
-  const [isLoading, setIsLoading] = useState(true);
   const [activeFAQ, setActiveFAQ] = useState(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -291,10 +182,8 @@ export default function LandingPage() {
     { q: "Is KYC verification mandatory?", a: "Yes. In compliance with international anti-money laundering (AML) laws, KYC verification (Aadhaar/PAN/Identity proof) must be approved before initiating USDT withdrawals exceeding ₹40,000." }
   ];
 
-  // GSAP Animations once loader is completed
+  // GSAP Animations on mount
   useEffect(() => {
-    if (isLoading) return;
-
     // Hero content entrance
     gsap.fromTo(
       heroLeftRef.current.children,
@@ -352,7 +241,7 @@ export default function LandingPage() {
         }
       );
     });
-  }, [isLoading]);
+  }, []);
 
   // Handle slide testimonial transition
   const handleTestimonialChange = (newIdx) => {
@@ -372,11 +261,7 @@ export default function LandingPage() {
   };
 
   return (
-    <>
-      {isLoading ? (
-        <StartupLoader onComplete={() => setIsLoading(false)} />
-      ) : (
-        <div className="flex flex-col min-h-screen bg-gft-light overflow-x-hidden selection:bg-gft-primary selection:text-white">
+    <div className="flex flex-col min-h-screen bg-gft-light overflow-x-hidden selection:bg-gft-primary selection:text-white">
           <Navbar />
 
           {/* Hero Section */}
@@ -752,7 +637,5 @@ export default function LandingPage() {
 
           <Footer />
         </div>
-      )}
-    </>
   );
 }

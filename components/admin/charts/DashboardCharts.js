@@ -1,4 +1,5 @@
 'use client';
+import { useState, useEffect } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend, PieChart, Pie, Cell
@@ -6,10 +7,23 @@ import {
 
 const COLORS = ['#65B300', '#0A4D45', '#8CD83D', '#062F2D'];
 
+function ClientResponsiveContainer({ children, ...props }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />;
+  }
+
+  return <ResponsiveContainer {...props}>{children}</ResponsiveContainer>;
+}
+
 export function RevenueChart({ data }) {
   return (
     <div className="h-72 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      <ClientResponsiveContainer width="100%" height="100%">
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -26,7 +40,7 @@ export function RevenueChart({ data }) {
           />
           <Area type="monotone" dataKey="revenue" stroke="#65B300" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
         </AreaChart>
-      </ResponsiveContainer>
+      </ClientResponsiveContainer>
     </div>
   );
 }
@@ -34,7 +48,7 @@ export function RevenueChart({ data }) {
 export function RegistrationsChart({ data }) {
   return (
     <div className="h-72 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      <ClientResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barSize={30}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} />
@@ -45,7 +59,7 @@ export function RegistrationsChart({ data }) {
           />
           <Bar dataKey="users" fill="#0A4D45" radius={[4, 4, 0, 0]} />
         </BarChart>
-      </ResponsiveContainer>
+      </ClientResponsiveContainer>
     </div>
   );
 }
@@ -53,7 +67,7 @@ export function RegistrationsChart({ data }) {
 export function DistributionPieChart({ data }) {
   return (
     <div className="h-72 w-full flex justify-center items-center">
-      <ResponsiveContainer width="100%" height="100%">
+      <ClientResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
@@ -73,7 +87,7 @@ export function DistributionPieChart({ data }) {
           />
           <Legend verticalAlign="bottom" height={36}/>
         </PieChart>
-      </ResponsiveContainer>
+      </ClientResponsiveContainer>
     </div>
   );
 }
