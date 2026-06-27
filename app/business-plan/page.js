@@ -2,9 +2,12 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Award, ShieldCheck, ArrowRight, DollarSign, Users, Briefcase, Zap, HelpCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function BusinessPlanPage() {
   const scrollContainerRef = useRef(null);
@@ -76,21 +79,25 @@ export default function BusinessPlanPage() {
 
   // 3. Scroll Triggered Money Flow Animation
   useEffect(() => {
-    // Animate money flow nodes as they scroll into view
-    const trigger = gsap.timeline({
-      scrollTrigger: {
-        trigger: scrollContainerRef.current,
-        start: "top 70%",
-        end: "bottom 30%",
-        scrub: 1
-      }
-    });
+    const ctx = gsap.context(() => {
+      // Animate money flow nodes as they scroll into view
+      const trigger = gsap.timeline({
+        scrollTrigger: {
+          trigger: scrollContainerRef.current,
+          start: "top 75%",
+          end: "bottom 25%",
+          scrub: 1
+        }
+      });
 
-    // Animate glowing nodes and SVG paths
-    trigger.fromTo(nodeSelfRef.current, { scale: 0.8, opacity: 0.3 }, { scale: 1.1, opacity: 1, duration: 1 })
-           .fromTo(nodeRefRef.current, { scale: 0.8, opacity: 0.3 }, { scale: 1.1, opacity: 1, duration: 1 }, "+=0.5")
-           .fromTo(nodeTeamRef.current, { scale: 0.8, opacity: 0.3 }, { scale: 1.1, opacity: 1, duration: 1 }, "+=0.5")
-           .fromTo(nodeTurnRef.current, { scale: 0.8, opacity: 0.3 }, { scale: 1.1, opacity: 1, duration: 1 }, "+=0.5");
+      // Animate glowing nodes elegantly
+      trigger.fromTo(nodeSelfRef.current, { scale: 0.9, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 1 })
+             .fromTo(nodeRefRef.current, { scale: 0.9, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 1 }, "+=0.3")
+             .fromTo(nodeTeamRef.current, { scale: 0.9, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 1 }, "+=0.3")
+             .fromTo(nodeTurnRef.current, { scale: 0.9, opacity: 0.3 }, { scale: 1, opacity: 1, duration: 1 }, "+=0.3");
+    }, scrollContainerRef);
+
+    return () => ctx.revert();
   }, []);
 
   return (
