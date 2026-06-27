@@ -124,6 +124,15 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
                   ))
                 )}
               </div>
+              <div className="p-3 border-t border-gft-gray-light text-center bg-gft-light">
+                <Link
+                  href="/dashboard/notifications"
+                  onClick={() => setShowNotifications(false)}
+                  className="text-xs text-gft-primary font-bold hover:underline"
+                >
+                  View all notifications
+                </Link>
+              </div>
             </div>
           )}
         </div>
