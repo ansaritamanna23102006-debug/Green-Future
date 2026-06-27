@@ -29,7 +29,7 @@ export default function LoginPage() {
     );
   }, []);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!identifier || !password) {
       setError("Please fill in all fields.");
@@ -39,12 +39,18 @@ export default function LoginPage() {
     setLoading(true);
     setError("");
 
-    // Simulate network delay
-    setTimeout(() => {
-      login(identifier, password);
+    try {
+      const res = await login(identifier, password);
       setLoading(false);
-      router.push("/dashboard");
-    }, 1000);
+      if (res && !res.success) {
+        setError(res.error || "Invalid username or password.");
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (err) {
+      setLoading(false);
+      setError("An unexpected error occurred. Please try again.");
+    }
   };
 
   return (
