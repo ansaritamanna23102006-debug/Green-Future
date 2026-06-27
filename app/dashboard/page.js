@@ -256,7 +256,7 @@ export default function DashboardPage() {
           </div>
           <div className="h-64 w-full">
             {mounted ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <AreaChart data={monthlyIncomeData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <defs>
                     <linearGradient id="incomeGrad" cx="0" cy="0" x2="0" y2="1">
@@ -285,7 +285,7 @@ export default function DashboardPage() {
           </div>
           <div className="h-64 w-full">
             {mounted ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <LineChart data={teamGrowthData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
                   <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
@@ -308,7 +308,7 @@ export default function DashboardPage() {
           </div>
           <div className="h-64 w-full">
             {mounted ? (
-              <ResponsiveContainer width="100%" height="100%">
+              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <BarChart data={tokenGrowthData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F1" />
                   <XAxis dataKey="name" stroke="#0A4D45" fontSize={10} tickLine={false} />
