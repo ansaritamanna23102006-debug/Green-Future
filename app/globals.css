@@ -6,6 +6,13 @@
   --foreground: #0E3B2E;
 }
 
+html, body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
