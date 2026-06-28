@@ -24,7 +24,7 @@ export default function SuperAdminDashboard() {
   const fetchSupplyMetrics = async () => {
     try {
       const token = localStorage.getItem("gft_token");
-      const res = await fetch("http://localhost:5000/api/v1/superadmin/token-supply", {
+      const res = await fetch("http://localhost:5000/api/v1/admin/token-supply", {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
