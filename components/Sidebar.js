@@ -105,7 +105,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
         {/* Sidebar Header */}
         <div className="p-5 border-b border-gft-border-dark flex items-center justify-between">
           <Link href="/dashboard" className="overflow-hidden">
-            <GFTLogo className="h-8 w-auto shrink-0" showText={!isCollapsed} light={true} />
+            <GFTLogo className="h-16 w-auto shrink-0" showText={!isCollapsed} light={true} />
           </Link>
 
           {/* Collapse Button for desktop */}
@@ -200,12 +200,15 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
                 key={item.name}
                 href={item.href}
                 onClick={() => setIsMobileOpen(false)}
-                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all group relative ${
+                className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all group relative duration-200 hover:translate-x-1 ${
                   isActive
-                    ? "bg-gft-primary text-white shadow-md shadow-gft-primary/20"
+                    ? "bg-gft-primary text-white shadow-md shadow-gft-primary/25"
                     : "text-white/60 hover:text-white hover:bg-white/5"
                 }`}
               >
+                {isActive && (
+                  <span className="absolute left-0 top-3 bottom-3 w-1 bg-gft-accent rounded-r" />
+                )}
                 <Icon className={`h-5 w-5 shrink-0 ${isActive ? "text-white" : "text-white/60 group-hover:text-gft-accent"}`} />
                 {!isCollapsed && <span className="truncate">{item.name}</span>}
 

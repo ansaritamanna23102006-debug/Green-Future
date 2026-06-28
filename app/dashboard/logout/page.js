@@ -111,7 +111,7 @@ export default function DashboardLogoutPage() {
             ref={clearedRef}
             className="bg-gft-dark-bg text-white border border-gft-border-dark p-8 sm:p-12 rounded-3xl shadow-2xl flex flex-col items-center gap-6 glow-green opacity-0"
           >
-            <GFTLogo className="h-10 w-auto" light={true} showText={false} />
+            <GFTLogo className="h-20 w-auto" light={true} showText={false} />
 
             <div
               className="check-icon w-16 h-16 rounded-full bg-gft-primary/20 border border-gft-primary flex items-center justify-center text-gft-accent opacity-0"

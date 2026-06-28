@@ -2,26 +2,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F8FAF8;
-  --foreground: #062F2D;
+  --background: #F8F6F1;
+  --foreground: #0E3B2E;
 }
 
 @theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   
-  /* GFT Brand Color Palette */
-  --color-gft-primary: #65B300;
-  --color-gft-dark: #0A4D45;
-  --color-gft-deep: #062F2D;
-  --color-gft-accent: #8CD83D;
-  --color-gft-light: #F8FAF8;
+  /* GFT Brand Color Palette - Premium Retheme */
+  --color-gft-primary: #C9A34A; /* Luxury Gold */
+  --color-gft-dark: #0B5D43;    /* Deep Emerald */
+  --color-gft-deep: #0E3B2E;    /* Dark Forest Green */
+  --color-gft-accent: #E0C26A;  /* Rich Gold */
+  --color-gft-light: #F8F6F1;   /* Off White */
   
   /* Additional Fintech Aesthetics */
-  --color-gft-dark-bg: #031D1C;
-  --color-gft-card-dark: #082F2C;
-  --color-gft-border-dark: #104C48;
-  --color-gft-gray-light: #EBEFEB;
+  --color-gft-dark-bg: #07211A;     /* Dark Forest Green Background */
+  --color-gft-card-dark: #0B3529;   /* Premium Dark Emerald Card */
+  --color-gft-border-dark: #164E3E; /* Dark Emerald Border */
+  --color-gft-gray-light: #EBE8DF;  /* Soft Premium Cream Border */
   
   --font-sans: 'Outfit', 'Plus Jakarta Sans', sans-serif;
   --font-mono: 'Geist Mono', monospace;
@@ -36,78 +36,105 @@
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #0A4D45;
+  background: #0B5D43;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #65B300;
+  background: #C9A34A;
 }
 
 /* Custom Utilities */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(248, 246, 241, 0.75);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(201, 163, 74, 0.15);
 }
 
 .glass-panel-dark {
-  background: rgba(6, 47, 45, 0.85);
+  background: rgba(11, 53, 41, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(201, 163, 74, 0.1);
 }
 
+/* Re-routing neon green glow names to luxury golds to maintain page compatibility */
 .glow-green {
-  box-shadow: 0 0 25px rgba(101, 179, 0, 0.15);
+  box-shadow: 0 0 25px rgba(201, 163, 74, 0.18);
 }
 
 .glow-green-strong {
-  box-shadow: 0 0 35px rgba(101, 179, 0, 0.45);
+  box-shadow: 0 0 35px rgba(201, 163, 74, 0.38);
 }
 
 .glow-text {
-  text-shadow: 0 0 10px rgba(140, 216, 61, 0.3);
+  text-shadow: 0 0 10px rgba(224, 194, 106, 0.35);
+}
+
+/* Gold Sweep animation class */
+.gold-shine-sweep {
+  position: relative;
+  overflow: hidden;
+}
+.gold-shine-sweep::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -60%;
+  width: 30%;
+  height: 200%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  transition: all 0.6s ease;
+}
+.gold-shine-sweep:hover::after {
+  left: 120%;
+  transition: all 0.6s ease;
 }
 
 /* Custom React Flow overrides for dark theme */
 .react-flow__node-custom {
   border-radius: 12px;
   padding: 10px;
-  background: #082F2C;
-  border: 1px solid #104C48;
+  background: #0B3529;
+  border: 1px solid #164E3E;
   color: #fff;
 }
 
 .react-flow__edge-path {
-  stroke: #65B300 !important;
+  stroke: #C9A34A !important;
   stroke-width: 2px !important;
 }
 
 .react-flow__controls-button {
-  background: #0A4D45 !important;
+  background: #0B5D43 !important;
   fill: #fff !important;
-  border-bottom: 1px solid #062F2D !important;
+  border-bottom: 1px solid #0E3B2E !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #65B300 !important;
+  background: #C9A34A !important;
 }
 
 /* GFT Dashboard Global Dark Theme Overrides */
 .gft-dashboard-theme {
   --color-gft-deep: #ffffff;
-  --color-gft-light: #031D1C;
-  --color-gft-gray-light: #104C48;
+  --color-gft-light: #07211A;
+  --color-gft-gray-light: #164E3E;
   color: #ffffff;
 }
 
 .gft-dashboard-theme .bg-white {
-  background-color: #082F2C !important;
+  background-color: #0B3529 !important;
 }
 
 .gft-dashboard-theme .border-gft-gray-light {
-  border-color: #104C48 !important;
+  border-color: #164E3E !important;
 }
 
 .gft-dashboard-theme .text-gft-deep {
@@ -115,11 +142,11 @@
 }
 
 .gft-dashboard-theme .text-gft-dark {
-  color: #8CD83D !important;
+  color: #C9A34A !important;
 }
 
 .gft-dashboard-theme .bg-gft-light {
-  background-color: #031D1C !important;
+  background-color: #07211A !important;
 }
 
 .gft-dashboard-theme .hover\:bg-gft-light:hover {
@@ -131,18 +158,18 @@
 }
 
 .gft-dashboard-theme .bg-gft-primary\/10 {
-  background-color: rgba(101, 179, 0, 0.2) !important;
+  background-color: rgba(201, 163, 74, 0.15) !important;
 }
 
 .gft-dashboard-theme .text-gft-primary {
-  color: #8CD83D !important;
+  color: #E0C26A !important;
 }
 
 .gft-dashboard-theme input, 
 .gft-dashboard-theme select, 
 .gft-dashboard-theme textarea {
   background-color: rgba(255, 255, 255, 0.05) !important;
-  border-color: #104C48 !important;
+  border-color: #164E3E !important;
   color: #ffffff !important;
 }
 
@@ -170,4 +197,3 @@
 .gft-dashboard-theme .text-gft-deep\/70 {
   color: rgba(255, 255, 255, 0.7) !important;
 }
-

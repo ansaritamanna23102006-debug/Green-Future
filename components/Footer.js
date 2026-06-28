@@ -13,7 +13,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
         {/* Brand & Description */}
         <div className="flex flex-col gap-5">
-          <GFTLogo className="h-9 w-auto" light={true} />
+          <GFTLogo className="h-16 w-auto" light={true} />
           <p className="text-white/70 text-[14px] leading-relaxed max-w-sm mt-2">
             Pioneering digital wealth creation through smart network marketing, sustainable blockchain technology, and robust community empowerment.
           </p>
@@ -61,7 +61,7 @@ export default function Footer() {
               <a
                 key={i}
                 href={social.href}
-                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:text-gft-accent hover:border-gft-accent transition-all hover:shadow-[0_0_10px_rgba(140,216,61,0.2)]"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white/80 hover:text-gft-accent hover:border-gft-accent transition-all hover:shadow-[0_0_12px_rgba(201,163,74,0.45)]"
               >
                 {social.svg}
               </a>

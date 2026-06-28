@@ -134,7 +134,7 @@ export default function RegisterPage() {
       <div className="w-full max-w-xl relative z-10 flex flex-col gap-6">
         <div className="flex justify-center">
           <Link href="/">
-            <GFTLogo className="h-10 w-auto" light={true} />
+            <GFTLogo className="h-20 w-auto" light={true} />
           </Link>
         </div>
 

@@ -25,45 +25,148 @@ export default function HeroCanvas() {
     containerRef.current.appendChild(renderer.domElement);
 
     // 2. Add Ambient & Directional Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0x8cd83d, 1.5);
-    dirLight.position.set(100, 100, 100);
-    scene.add(dirLight);
+    const dirLight1 = new THREE.DirectionalLight(0xc9a34a, 2.5);
+    dirLight1.position.set(100, 100, 100);
+    scene.add(dirLight1);
 
-    // 3. Create wireframe Globe (Earth Network representation)
-    const globeGeom = new THREE.SphereGeometry(65, 24, 24);
-    const globeMat = new THREE.MeshBasicMaterial({
-      color: 0x0a4d45,
-      wireframe: true,
+    const dirLight2 = new THREE.DirectionalLight(0x0b5d43, 2);
+    dirLight2.position.set(-100, -100, 50);
+    scene.add(dirLight2);
+
+    // 3. Create a Group to hold the 3D rotating objects
+    const mainGroup = new THREE.Group();
+    scene.add(mainGroup);
+
+    // Shield Shape Geometry
+    const shieldShape = new THREE.Shape();
+    shieldShape.moveTo(0, 30);
+    shieldShape.quadraticCurveTo(22, 30, 30, 15);
+    shieldShape.lineTo(30, -10);
+    shieldShape.quadraticCurveTo(30, -32, 0, -45);
+    shieldShape.quadraticCurveTo(-30, -32, -30, -10);
+    shieldShape.lineTo(-30, 15);
+    shieldShape.quadraticCurveTo(-22, 30, 0, 30);
+
+    const extrudeSettings = {
+      depth: 6,
+      bevelEnabled: true,
+      bevelSegments: 5,
+      steps: 1,
+      bevelSize: 2,
+      bevelThickness: 2
+    };
+
+    const shieldGeom = new THREE.ExtrudeGeometry(shieldShape, extrudeSettings);
+    
+    // Premium materials
+    const shieldMat = new THREE.MeshPhongMaterial({
+      color: 0x0b5d43, // Deep Emerald
+      emissive: 0x07211a,
+      specular: 0xc9a34a,
+      shininess: 90
+    });
+    
+    const goldMat = new THREE.MeshPhongMaterial({
+      color: 0xc9a34a, // Luxury Gold
+      emissive: 0x221a0a,
+      specular: 0xffffff,
+      shininess: 120
+    });
+
+    const shieldMesh = new THREE.Mesh(shieldGeom, shieldMat);
+    mainGroup.add(shieldMesh);
+
+    // Bull Horns/Face overlay shape on Shield
+    const hornsShape = new THREE.Shape();
+    hornsShape.moveTo(-15, 8);
+    hornsShape.bezierCurveTo(-18, 18, -8, 22, 0, 15);
+    hornsShape.bezierCurveTo(8, 22, 18, 18, 15, 8);
+    hornsShape.bezierCurveTo(12, 11, 7, 12, 0, 10);
+    hornsShape.bezierCurveTo(-7, 12, -12, 11, -15, 8);
+
+    const hornsGeom = new THREE.ExtrudeGeometry(hornsShape, {
+      depth: 3,
+      bevelEnabled: true,
+      bevelSize: 1,
+      bevelThickness: 1
+    });
+
+    const hornsMesh = new THREE.Mesh(hornsGeom, goldMat);
+    hornsMesh.position.set(0, 0, 5); // Offset slightly forward
+    shieldMesh.add(hornsMesh);
+
+    // Outer Glowing Ring (Gold)
+    const ringGeom = new THREE.RingGeometry(55, 56.5, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0xc9a34a,
+      side: THREE.DoubleSide,
       transparent: true,
       opacity: 0.35
     });
-    const globe = new THREE.Mesh(globeGeom, globeMat);
-    scene.add(globe);
-
-    // Create a secondary outer glowing globe ring
-    const ringGeom = new THREE.RingGeometry(80, 81, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0x65b300,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.2
-    });
     const ring = new THREE.Mesh(ringGeom, ringMat);
     ring.rotation.x = Math.PI / 3;
-    scene.add(ring);
+    mainGroup.add(ring);
 
-    // 4. Create floating particle vertices (Financial growth particles)
-    const partCount = 120;
+    // 4. Create floating financial bars (3D Boxes)
+    const barGroup = new THREE.Group();
+    mainGroup.add(barGroup);
+    const barCount = 10;
+    const bars = [];
+    const barGeom = new THREE.BoxGeometry(4, 15, 4);
+
+    for (let i = 0; i < barCount; i++) {
+      const isGold = i % 2 === 0;
+      const mesh = new THREE.Mesh(barGeom, isGold ? goldMat : shieldMat);
+      const angle = (i / barCount) * Math.PI * 2;
+      const radius = 68;
+      
+      mesh.position.set(
+        Math.cos(angle) * radius,
+        (Math.random() - 0.5) * 30,
+        Math.sin(angle) * radius
+      );
+      
+      mesh.scale.y = 0.5 + Math.random() * 1.5;
+      barGroup.add(mesh);
+      bars.push({
+        mesh,
+        speed: 0.5 + Math.random() * 1.5,
+        offset: Math.random() * 10
+      });
+    }
+
+    // 5. Create animated stock graph line (3D curve)
+    const curvePoints = [];
+    for (let i = 0; i < 15; i++) {
+      curvePoints.push(new THREE.Vector3(
+        (i - 7) * 12,
+        Math.sin(i * 0.8) * 18 + (i * 1.8) - 15,
+        (Math.random() - 0.5) * 8
+      ));
+    }
+    const curve = new THREE.CatmullRomCurve3(curvePoints);
+    const graphGeom = new THREE.TubeGeometry(curve, 64, 1.2, 8, false);
+    const graphMat = new THREE.MeshPhongMaterial({
+      color: 0xe0c26a,
+      emissive: 0x332a11,
+      specular: 0xffffff,
+      shininess: 100
+    });
+    const graphMesh = new THREE.Mesh(graphGeom, graphMat);
+    graphMesh.position.set(0, -25, 20);
+    mainGroup.add(graphMesh);
+
+    // 6. Create floating particle vertices (Golden dust particles)
+    const partCount = 150;
     const partGeom = new THREE.BufferGeometry();
     const positions = new Float32Array(partCount * 3);
     const velocities = [];
 
     for (let i = 0; i < partCount; i++) {
-      // Random coordinates in a shell around the globe
-      const r = 70 + Math.random() * 60;
+      const r = 40 + Math.random() * 90;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos((Math.random() * 2) - 1);
 
@@ -72,54 +175,23 @@ export default function HeroCanvas() {
       positions[i * 3 + 2] = r * Math.cos(phi);
 
       velocities.push({
-        x: (Math.random() - 0.5) * 0.15,
-        y: (Math.random() - 0.5) * 0.15,
-        z: (Math.random() - 0.5) * 0.15
+        x: (Math.random() - 0.5) * 0.25,
+        y: (Math.random() - 0.5) * 0.25,
+        z: (Math.random() - 0.5) * 0.25
       });
     }
 
     partGeom.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-    // Particle texture
     const pMaterial = new THREE.PointsMaterial({
-      color: 0x8cd83d,
-      size: 3,
+      color: 0xe0c26a,
+      size: 2.5,
       transparent: true,
-      opacity: 0.8
+      opacity: 0.85
     });
 
     const particles = new THREE.Points(partGeom, pMaterial);
     scene.add(particles);
-
-    // 5. Create connecting network lines
-    const lineMat = new THREE.LineBasicMaterial({
-      color: 0x65b300,
-      transparent: true,
-      opacity: 0.25
-    });
-
-    // We will dynamically connect nodes close to each other in the animation loop
-    const lineGeom = new THREE.BufferGeometry();
-    const lineIndices = [];
-    const linePositions = new Float32Array(partCount * 3);
-    lineGeom.setAttribute("position", new THREE.BufferAttribute(linePositions, 3));
-    
-    const networkLines = new THREE.LineSegments(lineGeom, lineMat);
-    scene.add(networkLines);
-
-    // 6. Setup energy sine waves
-    const waveMat = new THREE.LineBasicMaterial({
-      color: 0x8cd83d,
-      transparent: true,
-      opacity: 0.35,
-      linewidth: 2
-    });
-    const waveGeom = new THREE.BufferGeometry();
-    const wavePointsCount = 100;
-    const wavePositions = new Float32Array(wavePointsCount * 3);
-    waveGeom.setAttribute("position", new THREE.BufferAttribute(wavePositions, 3));
-    const energyWave = new THREE.Line(waveGeom, waveMat);
-    scene.add(energyWave);
 
     // Entrance Fade In using GSAP
     gsap.fromTo(renderer.domElement, 
@@ -135,14 +207,18 @@ export default function HeroCanvas() {
       animId = requestAnimationFrame(animate);
 
       timer.update(timestamp);
-      const delta = timer.getDelta();
       const time = timer.getElapsed();
 
-      // Rotate elements
-      globe.rotation.y += 0.002;
-      globe.rotation.x += 0.001;
-      ring.rotation.z -= 0.003;
-      particles.rotation.y -= 0.0015;
+      // Rotate shield and ring
+      mainGroup.rotation.y = time * 0.15;
+      ring.rotation.z = -time * 0.25;
+      particles.rotation.y = -time * 0.05;
+
+      // Animate floating bars
+      bars.forEach((bar) => {
+        bar.mesh.position.y += Math.sin(time * bar.speed + bar.offset) * 0.08;
+        bar.mesh.rotation.y += 0.01;
+      });
 
       // Update particle positions based on velocity
       const posArr = particles.geometry.attributes.position.array;
@@ -157,7 +233,7 @@ export default function HeroCanvas() {
           posArr[i * 3 + 1] ** 2 +
           posArr[i * 3 + 2] ** 2
         );
-        if (dist > 140 || dist < 68) {
+        if (dist > 150 || dist < 30) {
           velocities[i].x *= -1;
           velocities[i].y *= -1;
           velocities[i].z *= -1;
@@ -165,46 +241,9 @@ export default function HeroCanvas() {
       }
       particles.geometry.attributes.position.needsUpdate = true;
 
-      // Connect near particles dynamically
-      const linePositionsArr = [];
-      for (let i = 0; i < partCount; i++) {
-        const x1 = posArr[i * 3];
-        const y1 = posArr[i * 3 + 1];
-        const z1 = posArr[i * 3 + 2];
-
-        for (let j = i + 1; j < partCount; j++) {
-          const x2 = posArr[j * 3];
-          const y2 = posArr[j * 3 + 1];
-          const z2 = posArr[j * 3 + 2];
-
-          const d = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2);
-          if (d < 30) {
-            linePositionsArr.push(x1, y1, z1, x2, y2, z2);
-          }
-        }
-      }
-
-      const connectedGeom = new THREE.BufferGeometry();
-      connectedGeom.setAttribute("position", new THREE.Float32BufferAttribute(linePositionsArr, 3));
-      networkLines.geometry.dispose();
-      networkLines.geometry = connectedGeom;
-
-      // Update energy waves (sine wave shape)
-      const waveArr = energyWave.geometry.attributes.position.array;
-      for (let i = 0; i < wavePointsCount; i++) {
-        const x = (i - wavePointsCount / 2) * 2.8;
-        const y = Math.sin(i * 0.15 + time * 2) * 15;
-        const z = Math.cos(i * 0.1 + time * 1.5) * 10;
-
-        waveArr[i * 3] = x;
-        waveArr[i * 3 + 1] = y;
-        waveArr[i * 3 + 2] = z;
-      }
-      energyWave.geometry.attributes.position.needsUpdate = true;
-
       // Move camera slightly for parallax
-      camera.position.x = Math.sin(time * 0.2) * 15;
-      camera.position.y = Math.cos(time * 0.2) * 15;
+      camera.position.x = Math.sin(time * 0.15) * 20;
+      camera.position.y = Math.cos(time * 0.15) * 20;
       camera.lookAt(scene.position);
 
       renderer.render(scene, camera);
@@ -236,16 +275,17 @@ export default function HeroCanvas() {
         container.removeChild(renderer.domElement);
       }
       // Dispose materials & geometries
-      globeGeom.dispose();
-      globeMat.dispose();
+      shieldGeom.dispose();
+      shieldMat.dispose();
+      goldMat.dispose();
+      hornsGeom.dispose();
       ringGeom.dispose();
       ringMat.dispose();
+      barGeom.dispose();
+      graphGeom.dispose();
+      graphMat.dispose();
       partGeom.dispose();
       pMaterial.dispose();
-      lineGeom.dispose();
-      lineMat.dispose();
-      waveGeom.dispose();
-      waveMat.dispose();
       renderer.dispose();
     };
   }, []);
