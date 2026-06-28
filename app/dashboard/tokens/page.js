@@ -103,7 +103,7 @@ export default function TokensPage() {
 
           <div className="h-64 w-full">
             {mounted ? (
-              <ResponsiveContainer width="100%" height="100%" minWidth={0}>
+              <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
                 <AreaChart data={mockTokenTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="tokenGrad" cx="0" cy="0" x2="0" y2="1">

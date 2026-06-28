@@ -17,7 +17,7 @@ function ClientResponsiveContainer({ children, ...props }) {
     return <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />;
   }
 
-  return <ResponsiveContainer {...props}>{children}</ResponsiveContainer>;
+  return <ResponsiveContainer minWidth={0} minHeight={0} {...props}>{children}</ResponsiveContainer>;
 }
 
 export function RevenueChart({ data }) {
