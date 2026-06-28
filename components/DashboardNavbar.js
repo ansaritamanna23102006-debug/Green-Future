@@ -39,25 +39,25 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
   };
 
   return (
-    <header className="bg-white border-b border-gft-gray-light sticky top-0 z-30 py-4 px-6 flex justify-between items-center select-none shadow-sm">
+    <header className="bg-gft-dark-bg border-b border-gft-border-dark sticky top-0 z-30 py-4 px-6 flex justify-between items-center select-none shadow-sm text-white">
       {/* Search and Mobile toggle */}
       <div className="flex items-center gap-4 flex-1">
         <button
           onClick={() => setIsMobileOpen(true)}
-          className="lg:hidden p-2 rounded-lg hover:bg-gft-gray-light text-gft-deep"
+          className="lg:hidden p-2 rounded-lg hover:bg-white/5 text-white"
         >
           <Menu className="h-5 w-5" />
         </button>
 
         {/* Global Search bar */}
         <div className="relative max-w-xs w-full hidden md:block">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gft-deep/40">
+          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-white/40">
             <Search className="h-4 w-4" />
           </div>
           <input
             type="text"
             placeholder="Search transactions, referrals..."
-            className="w-full bg-gft-light border border-gft-gray-light rounded-xl pl-9 pr-4 py-2 text-sm outline-none focus:border-gft-primary"
+            className="w-full bg-white/5 border border-gft-border-dark rounded-xl pl-9 pr-4 py-2 text-sm outline-none focus:border-gft-primary text-white placeholder-white/40"
           />
         </div>
       </div>
@@ -66,7 +66,7 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
       <div className="flex items-center gap-4">
         {/* Verification Status Banner */}
         {user && (
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gft-primary/10 text-gft-primary">
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gft-primary/20 text-gft-accent">
             <CheckCircle className="h-3.5 w-3.5" /> ID: {user.memberId}
           </span>
         )}
@@ -78,19 +78,19 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
               setShowNotifications(!showNotifications);
               setShowProfile(false);
             }}
-            className="p-2 rounded-xl hover:bg-gft-light border border-gft-gray-light text-gft-deep relative transition-all"
+            className="p-2 rounded-xl hover:bg-white/5 border border-gft-border-dark text-white relative transition-all"
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (
-              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-white animate-pulse" />
+              <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-rose-500 rounded-full border-2 border-gft-dark-bg animate-pulse" />
             )}
           </button>
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 bg-white border border-gft-gray-light rounded-2xl shadow-xl overflow-hidden z-50">
-              <div className="p-4 border-b border-gft-gray-light flex justify-between items-center bg-gft-light">
-                <span className="font-bold text-gft-deep text-sm">Notifications</span>
+            <div className="absolute right-0 mt-3 w-80 bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
+              <div className="p-4 border-b border-gft-border-dark flex justify-between items-center bg-gft-dark-bg">
+                <span className="font-bold text-white text-sm">Notifications</span>
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllNotificationsRead}
@@ -102,29 +102,29 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
               </div>
               <div className="max-h-72 overflow-y-auto">
                 {notifications.length === 0 ? (
-                  <div className="p-6 text-center text-xs text-gft-deep/50">
+                  <div className="p-6 text-center text-xs text-white/50">
                     No notifications available.
                   </div>
                 ) : (
                   notifications.map((notif) => (
                     <div
                       key={notif.id}
-                      className={`p-4 border-b border-gft-gray-light hover:bg-gft-light transition-colors ${
-                        notif.unread ? "bg-gft-primary/5" : ""
+                      className={`p-4 border-b border-gft-border-dark hover:bg-white/5 transition-colors ${
+                        notif.unread ? "bg-gft-primary/10" : ""
                       }`}
                     >
-                      <h4 className="text-xs font-bold text-gft-deep flex justify-between">
+                      <h4 className="text-xs font-bold text-white flex justify-between">
                         {notif.title}
-                        <span className="text-[10px] text-gft-deep/45 font-normal">{notif.time}</span>
+                        <span className="text-[10px] text-white/45 font-normal">{notif.time}</span>
                       </h4>
-                      <p className="text-xs text-gft-deep/70 mt-1 leading-relaxed">
+                      <p className="text-xs text-white/70 mt-1 leading-relaxed">
                         {notif.message}
                       </p>
                     </div>
                   ))
                 )}
               </div>
-              <div className="p-3 border-t border-gft-gray-light text-center bg-gft-light">
+              <div className="p-3 border-t border-gft-border-dark text-center bg-gft-dark-bg">
                 <Link
                   href="/dashboard/notifications"
                   onClick={() => setShowNotifications(false)}
@@ -145,45 +145,45 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
                 setShowProfile(!showProfile);
                 setShowNotifications(false);
               }}
-              className="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-gft-light border border-gft-gray-light transition-all text-left"
+              className="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-white/5 border border-gft-border-dark transition-all text-left text-white"
             >
-              <div className="w-8 h-8 rounded-full bg-gft-dark text-white flex items-center justify-center font-bold text-xs">
+              <div className="w-8 h-8 rounded-full bg-gft-primary text-white flex items-center justify-center font-bold text-xs">
                 {user.name.split(" ").map((n) => n[0]).join("")}
               </div>
               <div className="flex flex-col hidden md:block">
-                <span className="text-xs font-bold text-gft-deep block leading-tight">{user.name}</span>
-                <span className="text-[10px] text-gft-deep/60 leading-tight uppercase font-medium">{user.designation}</span>
+                <span className="text-xs font-bold text-white block leading-tight">{user.name}</span>
+                <span className="text-[10px] text-white/60 leading-tight uppercase font-medium">{user.designation}</span>
               </div>
             </button>
 
             {/* Profile Dropdown */}
             {showProfile && (
-              <div className="absolute right-0 mt-3 w-56 bg-white border border-gft-gray-light rounded-2xl shadow-xl overflow-hidden z-50">
-                <div className="p-4 border-b border-gft-gray-light bg-gft-light">
-                  <p className="text-xs text-gft-deep/60">Logged in as</p>
-                  <p className="text-sm font-bold text-gft-deep truncate">{user.email}</p>
+              <div className="absolute right-0 mt-3 w-56 bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
+                <div className="p-4 border-b border-gft-border-dark bg-gft-dark-bg">
+                  <p className="text-xs text-white/60">Logged in as</p>
+                  <p className="text-sm font-bold text-white truncate">{user.email}</p>
                 </div>
                 <div className="p-1 flex flex-col">
                   <Link
                     href="/dashboard/profile"
                     onClick={() => setShowProfile(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-gft-deep hover:bg-gft-light"
+                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/5"
                   >
-                    <User className="h-4.5 w-4.5 text-gft-deep/60" /> Profile & KYC
+                    <User className="h-4.5 w-4.5 text-white/60" /> Profile & KYC
                   </Link>
                   <Link
                     href="/dashboard/support"
                     onClick={() => setShowProfile(false)}
-                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-gft-deep hover:bg-gft-light"
+                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-white hover:bg-white/5"
                   >
-                    <Settings className="h-4.5 w-4.5 text-gft-deep/60" /> Help Support
+                    <Settings className="h-4.5 w-4.5 text-white/60" /> Help Support
                   </Link>
-                  <hr className="my-1 border-gft-gray-light" />
+                  <hr className="my-1 border-gft-border-dark" />
                   <button
                     onClick={handleLogout}
-                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-rose-600 hover:bg-rose-50 hover:text-rose-700 text-left w-full cursor-pointer"
+                    className="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 text-left w-full cursor-pointer"
                   >
-                    <LogOut className="h-4.5 w-4.5 text-rose-500" /> Sign Out
+                    <LogOut className="h-4.5 w-4.5 text-rose-400" /> Sign Out
                   </button>
                 </div>
               </div>

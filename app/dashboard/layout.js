@@ -39,7 +39,7 @@ export default function DashboardLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-gft-light">
+    <div className="min-h-screen flex bg-gft-dark-bg text-white">
       {/* Responsive Sidebar */}
       <Sidebar
         isCollapsed={isCollapsed}
