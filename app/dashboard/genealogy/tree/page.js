@@ -22,7 +22,7 @@ function CustomNode({ data }) {
     <div className={`p-4.5 rounded-3xl border transition-all duration-300 min-w-[210px] shadow-xl text-left relative overflow-hidden group hover:scale-[1.03] hover:shadow-gft-primary/20 ${
       isActive
         ? "bg-gradient-to-b from-[#082F2C] to-[#041D1C] border-[#104C48] hover:border-gft-primary text-white"
-        : "bg-zinc-900 border-zinc-800 text-zinc-500 hover:border-zinc-700"
+        : "bg-zinc-900 border-zinc-800 text-zinc-400 hover:border-zinc-700"
     }`}>
       {/* Top Handle */}
       {data.wing !== "Root" && (
@@ -64,13 +64,13 @@ function CustomNode({ data }) {
         <div className={`w-9 h-9 rounded-full flex items-center justify-center font-extrabold text-xs shrink-0 shadow-inner relative border ${
           isActive 
             ? "bg-gft-dark/60 text-gft-accent border-gft-primary/30 group-hover:border-gft-primary text-white" 
-            : "bg-zinc-800 text-zinc-500 border-zinc-700"
+            : "bg-zinc-800 text-zinc-400 border-zinc-700"
         }`}>
           {initials}
         </div>
         <div className="flex flex-col min-w-0">
-          <h4 className={`text-xs font-extrabold truncate transition-colors ${isActive ? "text-white group-hover:text-gft-accent" : "text-zinc-500"}`}>{data.name}</h4>
-          <p className={`text-[9px] font-semibold tracking-wider ${isActive ? "text-white/40" : "text-zinc-600"}`}>{data.memberId}</p>
+          <h4 className={`text-xs font-extrabold truncate transition-colors ${isActive ? "text-white group-hover:text-gft-accent" : "text-zinc-300"}`}>{data.name}</h4>
+          <p className={`text-[9px] font-semibold tracking-wider ${isActive ? "text-white/40" : "text-zinc-450 text-zinc-400"}`}>{data.memberId}</p>
         </div>
       </div>
       
@@ -81,14 +81,14 @@ function CustomNode({ data }) {
             <Coins className="h-3.5 w-3.5 text-gft-accent/70" />
             Package
           </span>
-          <span className={`font-extrabold ${isActive ? "text-gft-accent" : "text-zinc-500"}`}>${data.package}</span>
+          <span className={`font-extrabold ${isActive ? "text-gft-accent" : "text-zinc-300"}`}>${data.package}</span>
         </div>
         <div className="flex justify-between items-center text-[10px]">
           <span className="text-white/45 flex items-center gap-1.5">
             <Award className="h-3.5 w-3.5 text-gft-primary/70" />
             Rank
           </span>
-          <span className={`font-semibold truncate max-w-[90px] ${isActive ? "text-white/80" : "text-zinc-500"}`}>{data.designation}</span>
+          <span className={`font-semibold truncate max-w-[90px] ${isActive ? "text-white/80" : "text-zinc-300"}`}>{data.designation}</span>
         </div>
       </div>
 

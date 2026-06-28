@@ -9,6 +9,14 @@ export default function SponsorInfoPage() {
 
   if (!user) return null;
 
+  if (user.role !== "superadmin") {
+    return (
+      <div className="flex h-96 items-center justify-center text-white/50 bg-gft-card-dark border border-gft-border-dark rounded-3xl p-8 max-w-md mx-auto mt-12">
+        <p className="text-sm font-semibold">Access Denied. Only available for Superadmin.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8 max-w-2xl mx-auto select-none">
       {/* Page Header */}

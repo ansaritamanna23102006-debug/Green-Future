@@ -74,7 +74,7 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
       subItems: [
         { name: "Graphical Tree", href: "/dashboard/genealogy/tree" },
         { name: "Team Table", href: "/dashboard/genealogy/team" },
-        { name: "Sponsor Info", href: "/dashboard/genealogy/sponsor" }
+        ...(user?.role === "superadmin" ? [{ name: "Sponsor Info", href: "/dashboard/genealogy/sponsor" }] : [])
       ]
     },
     { name: "My Packages", href: "/dashboard/packages", icon: Gift },
