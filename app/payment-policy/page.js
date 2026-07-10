@@ -52,7 +52,7 @@ function PolicyAccordion({ title, icon: Icon, children, isOpen, toggleOpen }) {
 }
 
 export default function PublicPolicyPage() {
-  const [openPolicy, setOpenPolicy] = useState("withdrawal");
+  const [openPolicy, setOpenPolicy] = useState("terms");
 
   return (
     <div className="flex flex-col min-h-screen bg-gft-light overflow-x-hidden selection:bg-gft-primary selection:text-white">
@@ -62,47 +62,49 @@ export default function PublicPolicyPage() {
       <section className="relative pt-32 pb-20 bg-gradient-to-b from-gft-dark-bg via-[#082E2B] to-[#031412] text-white">
         <div className="max-w-4xl mx-auto px-6 text-center flex flex-col gap-5 relative z-10">
           <span className="text-gft-accent font-bold text-xs uppercase tracking-widest">Compliance Desk</span>
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">Payment & Compensation Policy</h1>
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">Payment & Terms Policy</h1>
           <p className="text-white/70 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-            Official guidelines governing USDT withdrawals, matrix capped distributions, and GFT token lockup schedules.
+            Official guidelines governing investment timelines, withdrawal schedules, and dynamic referral terms.
           </p>
         </div>
       </section>
 
       {/* Accordions Stack */}
       <section className="py-24 max-w-4xl mx-auto px-6 w-full flex flex-col gap-4">
-        {/* Withdrawal Policy */}
+        {/* Core Terms */}
         <PolicyAccordion
-          title="USDT Withdrawal Policy"
+          title="Company Terms & Conditions"
           icon={Landmark}
-          isOpen={openPolicy === "withdrawal"}
-          toggleOpen={() => setOpenPolicy(openPolicy === "withdrawal" ? null : "withdrawal")}
+          isOpen={openPolicy === "terms"}
+          toggleOpen={() => setOpenPolicy(openPolicy === "terms" ? null : "terms")}
         >
           <p>
-            Green Future Tech handles withdrawals via smart contracts using <strong>USDT TRC-20, ERC-20, or BEP-20 protocols</strong>. This guarantees instant, decentralized settlements.
+            Welcome to Green Future Tech. By registering and activating a package, you agree to comply with the following operational rules:
           </p>
-          <ul className="list-disc pl-5 flex flex-col gap-2">
-            <li><strong>Minimum Withdrawal:</strong> The minimum threshold for initiating a withdrawal request is <strong>₹1,500 ($20)</strong>.</li>
-            <li><strong>Processing Timeline:</strong> Withdrawals are processed automatically and settle instantly (usually within 5 to 15 minutes depending on blockchain traffic).</li>
-            <li><strong>Service Fees:</strong> A flat administrative fee of <strong>5%</strong> is deducted from the gross payout amount to cover smart contract gas fees and energy asset backing reserves.</li>
-            <li><strong>Limits:</strong> Standard members have a daily withdrawal cap of <strong>₹80,000 ($1,000)</strong>. Ranks from Emerald and above have matching limits up to <strong>₹8,000,000 ($10,000)</strong> daily.</li>
+          <ul className="list-disc pl-5 flex flex-col gap-2.5">
+            <li><strong>Mandatory Verification Documents:</strong> National identity proof (Aadhaar Card, PAN Card) and your own personal bank account coordinates are required to qualify for payouts.</li>
+            <li><strong>Account Closing Cycle:</strong> Closing is conducted from the <strong>1st to the 30th of every month</strong>.</li>
+            <li><strong>Capital Lockup:</strong> Once an investment is activated, the stake is locked for exactly <strong>1 year (12 months)</strong>. No early withdrawals or principal redemptions are allowed under any circumstances.</li>
+            <li><strong>Market Risk Notice:</strong> There is a possibility of short-term losses due to market movement in the stock and forex markets. In such cases, GFT advises members to remain calm and wait for market recovery.</li>
           </ul>
         </PolicyAccordion>
 
-        {/* Income Distribution */}
+        {/* Withdrawal & Income Timelines */}
         <PolicyAccordion
-          title="Income Distribution & Capping"
+          title="Income Payout & Withdrawal Timelines"
           icon={Receipt}
-          isOpen={openPolicy === "distribution"}
-          toggleOpen={() => setOpenPolicy(openPolicy === "distribution" ? null : "distribution")}
+          isOpen={openPolicy === "timelines"}
+          toggleOpen={() => setOpenPolicy(openPolicy === "timelines" ? null : "timelines")}
         >
           <p>
-            Commissions are split into distinct ledger pools to maintain the platform's liquidity and green asset investment reserves.
+            GFT distributes different income categories on dedicated dates to ensure stability and smooth transaction processing:
           </p>
-          <ul className="list-disc pl-5 flex flex-col gap-2">
-            <li><strong>Direct Referrals:</strong> A flat <strong>10%</strong> commission is awarded on all direct node package activations.</li>
-            <li><strong>Binary Matching Income:</strong> Matching wing volume commissions are matches at <strong>12%</strong> on the weaker wing. The maximum binary capping per week matches the user's active package value.</li>
-            <li><strong>Reinvestment Pool:</strong> <strong>10%</strong> of weekly binary income is routed to the user's Staking Reinvestment Pool, which automatically stakes back once it reaches ₹8,000 ($100), boosting their passive return yields.</li>
+          <ul className="list-disc pl-5 flex flex-col gap-2.5">
+            <li><strong>Self Income:</strong> Disbursed monthly on the <strong>1st, 11th, and 21st</strong>.</li>
+            <li><strong>Reference Level Income:</strong> Disbursed instantly within <strong>24 hours</strong> of a downline ID activation.</li>
+            <li><strong>Turnover & Designation Income:</strong> Calculated monthly and given to leaders on the <strong>5th of every month</strong>.</li>
+            <li><strong>Passive Income:</strong> Settled and disbursed on the <strong>7th of every month</strong>.</li>
+            <li><strong>Minimum Withdrawal:</strong> Standard withdraw minimum is ₹500 (or $10 equivalent).</li>
           </ul>
         </PolicyAccordion>
 
@@ -114,46 +116,12 @@ export default function PublicPolicyPage() {
           toggleOpen={() => setOpenPolicy(openPolicy === "token" ? null : "token")}
         >
           <p>
-            GFT tokens represent decentralized stakes in green solar farm operations.
+            GFT tokens represent clean energy allocations and decentralized yield stakes:
           </p>
-          <ul className="list-disc pl-5 flex flex-col gap-2">
-            <li><strong>Signup & Purchase Airdrop:</strong> New affiliates receive 100 GFT on signup. Staking purchases award 5x token rewards (e.g., ₹10,000 package yields 500 GFT).</li>
-            <li><strong>Staking APY:</strong> Tokens are locked in a yield contract generating up to <strong>18% APY</strong> (accrued and distributed daily).</li>
-            <li><strong>Vesting & Release:</strong> To prevent token dumps, a <strong>180-day lockup</strong> is applied to rewards. Post lockup, users can transfer GFT tokens to their external Web3 wallets or trade them at prevailing platform exchange values.</li>
-          </ul>
-        </PolicyAccordion>
-
-        {/* KYC Requirements */}
-        <PolicyAccordion
-          title="KYC Compliance Requirements"
-          icon={ShieldCheck}
-          isOpen={openPolicy === "kyc"}
-          toggleOpen={() => setOpenPolicy(openPolicy === "kyc" ? null : "kyc")}
-        >
-          <p>
-            To prevent fraud, multiple account setups, and strictly comply with international anti-money laundering (AML) laws, GFT mandates Identity Verification.
-          </p>
-          <ul className="list-disc pl-5 flex flex-col gap-2">
-            <li><strong>Identity Verification:</strong> Scans of national identities (e.g. Aadhaar Card, PAN Card, Passport) are mandatory.</li>
-            <li><strong>Bank Verification:</strong> A canceled cheque or passbook image showing the matching account name is required to verify fiat withdrawal alternatives.</li>
-            <li><strong>Restrictions:</strong> Unverified accounts are capped at a lifetime withdrawal threshold of ₹40,000 ($500). Verification checks are resolved within 24 hours of submission.</li>
-          </ul>
-        </PolicyAccordion>
-
-        {/* Terms & Conditions */}
-        <PolicyAccordion
-          title="Code of Conduct & Ethics"
-          icon={FileCheck}
-          isOpen={openPolicy === "ethics"}
-          toggleOpen={() => setOpenPolicy(openPolicy === "ethics" ? null : "ethics")}
-        >
-          <p>
-            Affiliates are independent representatives and are required to promote GFT ethically and transparently.
-          </p>
-          <ul className="list-disc pl-5 flex flex-col gap-2">
-            <li><strong>No Spam/False Yield claims:</strong> Affiliates cannot guarantee speculative yields beyond official plan disclosures. Representing GFT as a guaranteed get-rich-quick scheme is grounds for node termination.</li>
-            <li><strong>Single Node per Taxpayer:</strong> Setting up phantom nodes (dummy downlines using the same taxpayer ID) violates matrix integrity. GFT reserves the right to lock suspicious wings pending audit.</li>
-            <li><strong>Cross-Sponsoring:</strong> Inducing active members to switch wings or register under new sponsor nodes is strictly prohibited.</li>
+          <ul className="list-disc pl-5 flex flex-col gap-2.5">
+            <li><strong>Signup & Airdrop:</strong> New affiliates receive 100 GFT on signup. Active package purchases award up to 5x token rewards (e.g. ₹10,000 package yields 1,200 GFT).</li>
+            <li><strong>APY Yield:</strong> Tokens held in the wallet generate automated yield rewards, which are added directly to the total token balance.</li>
+            <li><strong>Lockup Term:</strong> Staking rewards are locked for a standard term of 12 months, synced with your eco-package duration.</li>
           </ul>
         </PolicyAccordion>
       </section>

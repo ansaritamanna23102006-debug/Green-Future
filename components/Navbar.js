@@ -26,10 +26,12 @@ export default function Navbar() {
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "About", href: "/about" },
-    { name: "Plan", href: "/business-plan" },
+    { name: "Vision", href: "/vision-mission" },
+    { name: "Packages", href: "/packages" },
+    { name: "Refer", href: "/refer-earn" },
+    { name: "Ranks", href: "/ranks-rewards" },
+    { name: "Token", href: "/gft-token" },
     { name: "Offers", href: "/offers" },
-    { name: "Policy", href: "/payment-policy" },
-    { name: "Contact", href: "/contact" },
   ];
 
   return (

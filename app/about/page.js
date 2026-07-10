@@ -6,10 +6,12 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ShieldCheck, Users, Leaf, Cpu } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useApp } from "@/lib/context/AppContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function AboutPage() {
+  const { cmsContent } = useApp();
   const overviewRef = useRef(null);
 
   useEffect(() => {
@@ -30,9 +32,9 @@ export default function AboutPage() {
   }, []);
 
   const values = [
-    { title: "Eco-First Technology", desc: "We fund, operate, and build concrete solar and wind energy production networks globally.", icon: Leaf },
-    { title: "Transparency Protocol", desc: "Staking yields and energy outputs are recorded transparently via blockchain tokens.", icon: ShieldCheck },
-    { title: "Community Decentralization", desc: "Referral structures reward organic affiliate builders who help bootstrap global green asset stakes.", icon: Users },
+    { title: "Our Vision", desc: cmsContent?.about?.vision || "To be the most trusted and reliable service provider of smart saving solutions worldwide.", icon: Leaf },
+    { title: "Our Mission", desc: cmsContent?.about?.mission || "To provide financial freedom to 1 lakh people by 2030.", icon: ShieldCheck },
+    { title: "Transparency Protocol", desc: "Staking yields and energy outputs are recorded transparently via blockchain tokens.", icon: Users },
   ];
 
   const leadership = [
@@ -63,12 +65,9 @@ export default function AboutPage() {
           className="flex flex-col gap-6 opacity-0"
         >
           <span className="text-gft-primary font-bold text-xs uppercase tracking-wide">Corporate Overview</span>
-          <h2 className="text-3xl font-extrabold text-gft-deep">Who is Green Future Tech?</h2>
+          <h2 className="text-3xl font-extrabold text-gft-deep">{cmsContent?.about?.heading || "Who is Green Future Tech?"}</h2>
           <p className="text-gft-deep/75 text-sm sm:text-base leading-relaxed font-normal">
-            Founded in 2025, Green Future Tech (GFT) was created to address a primary challenge in traditional network marketing: the lack of physical asset backing. We construct utility-scale solar arrays and wind turbines. 
-          </p>
-          <p className="text-gft-deep/75 text-sm sm:text-base leading-relaxed font-normal">
-            By purchasing GFT eco-packages, members directly acquire fractional stakes in energy outputs, generating daily rewards and native GFT blockchain tokens while supporting global carbon offset credits.
+            {cmsContent?.about?.description || "Green Future Tech is dedicated to building sustainable investment platforms for everyone. The company invests the collected capital into various channels, primarily stock and forex markets, to distribute profits and ensure long-term stability for our affiliates."}
           </p>
         </div>
 

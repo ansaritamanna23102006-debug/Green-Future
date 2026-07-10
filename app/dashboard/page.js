@@ -63,7 +63,7 @@ function DashboardCountUp({ end, prefix = "", suffix = "", decimals = 0 }) {
 }
 
 export default function DashboardPage() {
-  const { user, announcementDismissed, setAnnouncementDismissed } = useApp();
+  const { user, announcementDismissed, setAnnouncementDismissed, cmsContent } = useApp();
   const [mounted, setMounted] = useState(false);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
 
@@ -180,13 +180,12 @@ export default function DashboardPage() {
     );
   }
 
-  // Dashboard Cards Definition
   const cardItems = [
-    { title: "Personal Income", value: user.balance.personalIncome, prefix: "$", icon: Wallet, growth: "+12.4%", isPositive: true },
-    { title: "Team Income", value: user.balance.teamIncome, prefix: "$", icon: Users, growth: "+24.8%", isPositive: true },
-    { title: "Direct Income", value: user.balance.directIncome, prefix: "$", icon: UserPlus, growth: "+8.2%", isPositive: true },
-    { title: "Matching Bonus", value: user.balance.bonus, prefix: "$", icon: Award, growth: "+15.0%", isPositive: true },
-    { title: "Team Turnover", value: user.balance.turnover, prefix: "$", icon: Briefcase, growth: "+31.2%", isPositive: true },
+    { title: "Personal Income", value: user.balance.personalIncome, prefix: "₹", icon: Wallet, growth: "+12.4%", isPositive: true },
+    { title: "Team Income", value: user.balance.teamIncome, prefix: "₹", icon: Users, growth: "+24.8%", isPositive: true },
+    { title: "Direct Income", value: user.balance.directIncome, prefix: "₹", icon: UserPlus, growth: "+8.2%", isPositive: true },
+    { title: "Matching Bonus", value: user.balance.bonus, prefix: "₹", icon: Award, growth: "+15.0%", isPositive: true },
+    { title: "Team Turnover", value: user.balance.turnover, prefix: "₹", icon: Briefcase, growth: "+31.2%", isPositive: true },
     { title: "Total Team", value: user.balance.totalTeam, icon: Network, growth: "+14 members", isPositive: true },
     { title: "Active Downlines", value: user.balance.activeTeam, icon: ShieldCheck, growth: "85.2% active", isPositive: true },
     { title: "GFT Tokens", value: user.balance.tokenBalance, suffix: " GFT", icon: Coins, growth: "+5,200 GFT", isPositive: true }
@@ -359,7 +358,7 @@ export default function DashboardPage() {
                   <td className="py-4 px-4 font-semibold text-white/80">{member.id}</td>
                   <td className="py-4 px-4 font-bold text-white">{member.name}</td>
                   <td className="py-4 px-4 text-right font-extrabold text-gft-primary">
-                    ${member.payout.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    ₹{member.payout.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </td>
                   <td className="py-4 px-4 text-center">
                     <span
@@ -405,26 +404,14 @@ export default function DashboardPage() {
               </div>
               <div>
                 <span className="text-[10px] uppercase font-extrabold tracking-widest text-gft-primary">Official Announcement</span>
-                <h2 className="text-xl font-bold text-white">Phase II GFT Tokenization Launch</h2>
+                <h2 className="text-xl font-bold text-white">{cmsContent?.popup?.title || "Phase II GFT Tokenization Launch"}</h2>
               </div>
             </div>
 
             <div className="flex flex-col gap-4 text-sm text-white/85 leading-relaxed">
               <p>
-                Welcome back to the Green Future Tech Network! We are thrilled to announce that the **Phase II Smart Contract audit** is complete.
+                {cmsContent?.popup?.message || "Welcome back to the Green Future Tech Network! We are thrilled to announce that the Phase II Smart Contract audit is complete."}
               </p>
-              <p>
-                Starting this week, all binary matching outputs will carry a **5% GFT Token loyalty bonus**. Make sure your **USDT ERC-20 / BEP-20 Wallet Address** is updated under your Profile panel to secure automated payouts.
-              </p>
-              <div className="p-4 bg-white/5 border border-gft-border-dark rounded-2xl flex items-center justify-between mt-2">
-                <div className="flex flex-col">
-                  <span className="text-[10px] text-white/50 font-bold uppercase">Audit Document</span>
-                  <span className="text-xs font-bold text-white">GFT-Audit-Report-V2.pdf</span>
-                </div>
-                <button className="flex items-center gap-1 text-xs text-gft-primary font-bold hover:underline cursor-pointer">
-                  Download <ExternalLink className="h-3 w-3" />
-                </button>
-              </div>
             </div>
 
             <div className="mt-8 flex gap-3">

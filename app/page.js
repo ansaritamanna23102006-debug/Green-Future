@@ -22,6 +22,7 @@ import {
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import HeroCanvas from "@/components/HeroCanvas";
+import { useApp } from "@/lib/context/AppContext";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -98,6 +99,7 @@ function FAQItem({ question, answer, isOpen, toggleOpen }) {
 }
 
 export default function LandingPage() {
+  const { cmsContent, studentPackages, personalPackages, businessPackages } = useApp();
   const [activeFAQ, setActiveFAQ] = useState(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -281,26 +283,26 @@ export default function LandingPage() {
                 </div>
 
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
-                  Building Wealth Through <span className="text-transparent bg-clip-text bg-gradient-to-r from-gft-primary to-gft-accent">Technology</span> & Community
+                  {cmsContent?.hero?.title || "Green Future Tech"}
                 </h1>
-
+ 
                 <p className="text-lg sm:text-xl text-white/80 max-w-xl font-normal leading-relaxed">
-                  Join Green Future Tech and unlock opportunities through smart networking, digital assets, and team growth.
+                  {cmsContent?.hero?.subtitle || "Empowering Your Green Future & Sustaining Tomorrow."}
                 </p>
-
+ 
                 <div className="flex flex-wrap gap-4 mt-4 w-full sm:w-auto">
                   <Link
-                    href="/register"
+                    href={cmsContent?.hero?.primaryBtnLink || "/register"}
                     className="w-full sm:w-auto text-center bg-gft-primary hover:bg-gft-accent text-white text-[15px] font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 transition-all shadow-lg shadow-gft-primary/25 hover:shadow-gft-accent/25 hover:-translate-y-0.5"
                   >
-                    Join Now
+                    {cmsContent?.hero?.primaryBtn || "Join Now"}
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                   <Link
-                    href="/login"
+                    href={cmsContent?.hero?.secondaryBtnLink || "/business-plan"}
                     className="w-full sm:w-auto text-center bg-white/5 hover:bg-white/10 border border-white/15 text-white text-[15px] font-bold px-8 py-4 rounded-full transition-all backdrop-blur-sm flex justify-center items-center"
                   >
-                    Member Login
+                    {cmsContent?.hero?.secondaryBtn || "View Plan"}
                   </Link>
                 </div>
 
@@ -382,10 +384,10 @@ export default function LandingPage() {
               <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
                 <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Our Foundation</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Fusing Green Innovation with Network Architecture
+                  {cmsContent?.about?.heading || "Fusing Green Innovation with Network Architecture"}
                 </h2>
                 <p className="text-gft-deep/75 text-[16px] leading-relaxed">
-                  Green Future Tech empowers developers and stakeholders globally. We fund actual renewable assets through direct distribution structures, creating transparent yields for our affiliate network.
+                  {cmsContent?.about?.description || "Green Future Tech is dedicated to building sustainable investment platforms for everyone. The company invests the collected capital into various channels, primarily stock and forex markets, to distribute profits and ensure long-term stability for our affiliates."}
                 </p>
               </div>
 
@@ -397,7 +399,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-gft-deep">Our Vision</h3>
                   <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    To build a carbon-neutral digital ecosystem where energy production stakes are decentralized and network members share direct technology growth pools.
+                    {cmsContent?.about?.vision || "To be the most trusted and reliable service provider of smart saving solutions worldwide."}
                   </p>
                 </div>
 
@@ -408,7 +410,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-gft-deep">Our Mission</h3>
                   <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    Empowering communities with a high-fidelity affiliate matrix that guarantees transparent yield reporting, KYC security, and instant global USDT settlement.
+                    {cmsContent?.about?.mission || "To provide financial freedom to 1 lakh people by 2030."}
                   </p>
                 </div>
 
@@ -419,8 +421,78 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-gft-deep">Why Choose GFT</h3>
                   <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    Unlike traditional MLM schemes, GFT yields are backed by real solar farms and wind assets, generating concrete yields that power token values.
+                    Unlike traditional MLM schemes, GFT yields are backed by real-world financial allocations and forex markets, generating concrete yields that power token values.
                   </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Packages Preview Section */}
+          <section id="packages-preview" className="py-24 bg-white border-t border-gft-gray-light relative">
+            <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gft-primary/5 rounded-full blur-[100px] pointer-events-none" />
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+              <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
+                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Investment Tiers</span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                  Explore GFT Eco-Tech Investment Packages
+                </h2>
+                <p className="text-gft-deep/75 text-[16px] leading-relaxed">
+                  Participate in our financial pipelines with options tailored for students, personal growth, and business executives. All options feature monthly yields and native token multipliers.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* Student Preview */}
+                <div className="bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
+                  <div>
+                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Student Category</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Student Lite</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹1,200</p>
+                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 8% Monthly</span></div>
+                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 1,200 GFT</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                    </div>
+                  </div>
+                  <Link href="/packages/student" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                    View Student Packages <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                {/* Personal Preview */}
+                <div className="bg-gradient-to-tr from-teal-500/5 to-gft-primary/5 border border-gft-primary/30 p-8 rounded-3xl flex flex-col justify-between shadow-md relative overflow-hidden group hover:shadow-xl transition-all">
+                  <div className="absolute top-4 right-4 bg-gft-primary text-white text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                  <div>
+                    <span className="px-3 py-1 bg-gft-primary/10 text-gft-primary text-[10px] font-bold uppercase rounded-full tracking-wider">Personal Category</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Personal Star</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹20,000</p>
+                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 12.5% Monthly</span></div>
+                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 7,500 GFT</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                    </div>
+                  </div>
+                  <Link href="/packages/personal" className="w-full text-center bg-gft-primary text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-accent transition-all shadow-md">
+                    View Personal Packages <ArrowRight size={14} />
+                  </Link>
+                </div>
+
+                {/* Business Preview */}
+                <div className="bg-gradient-to-tr from-amber-500/5 to-gft-primary/10 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
+                  <div>
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Business Category</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Business Elite</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹1,50,000</p>
+                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 15% Monthly</span></div>
+                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 25,000 GFT</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                    </div>
+                  </div>
+                  <Link href="/packages/business" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                    View Business Packages <ArrowRight size={14} />
+                  </Link>
                 </div>
               </div>
             </div>
