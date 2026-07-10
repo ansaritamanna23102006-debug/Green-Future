@@ -28,15 +28,15 @@ export default function NetworkCanvas() {
     const ambient = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambient);
 
-    const dirLight = new THREE.DirectionalLight(0x8cd83d, 1.2);
+    const dirLight = new THREE.DirectionalLight(0xc9a34a, 1.2);
     dirLight.position.set(50, 50, 50);
     scene.add(dirLight);
 
     // 3. Central Leader Node
     const leaderGeom = new THREE.SphereGeometry(8, 16, 16);
     const leaderMat = new THREE.MeshPhongMaterial({
-      color: 0x65b300,
-      emissive: 0x0a4d45,
+      color: 0xc9a34a,
+      emissive: 0x07211a,
       specular: 0xffffff,
       shininess: 30
     });
@@ -46,10 +46,10 @@ export default function NetworkCanvas() {
     // Outer glow ring for Leader
     const glowRingGeom = new THREE.RingGeometry(11, 12, 32);
     const glowRingMat = new THREE.MeshBasicMaterial({
-      color: 0x8cd83d,
+      color: 0xe0c26a,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.3
+      opacity: 0.35
     });
     const leaderGlow = new THREE.Mesh(glowRingGeom, glowRingMat);
     leaderNode.add(leaderGlow);
@@ -59,8 +59,8 @@ export default function NetworkCanvas() {
     const nodeMeshes = [];
     const connectionLines = [];
     const nodeGeom = new THREE.SphereGeometry(3, 8, 8);
-    const nodeMatActive = new THREE.MeshPhongMaterial({ color: 0x8cd83d });
-    const nodeMatInactive = new THREE.MeshPhongMaterial({ color: 0x0a4d45 });
+    const nodeMatActive = new THREE.MeshPhongMaterial({ color: 0xe0c26a });
+    const nodeMatInactive = new THREE.MeshPhongMaterial({ color: 0x0b5d43 });
 
     // Set hierarchical branches
     // Level 1: Left & Right wings
@@ -106,9 +106,9 @@ export default function NetworkCanvas() {
 
     // Connect node meshes to parents
     const lineMat = new THREE.LineBasicMaterial({
-      color: 0x65b300,
+      color: 0xc9a34a,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.3
     });
 
     nodesData.forEach((data, index) => {

@@ -32,7 +32,7 @@ export default function InspectCanvas({ rewardType = "gold" }) {
     keyLight.position.set(50, 50, 50);
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0x8cd83d, 1);
+    const rimLight = new THREE.DirectionalLight(0xc9a34a, 1.2);
     rimLight.position.set(-50, -50, -50);
     scene.add(rimLight);
 
@@ -63,7 +63,7 @@ export default function InspectCanvas({ rewardType = "gold" }) {
 
       // Dial face inner
       const faceGeom = new THREE.CylinderGeometry(7.5, 7.5, 0.5, 32);
-      const faceMat = new THREE.MeshPhongMaterial({ color: 0x062f2d });
+      const faceMat = new THREE.MeshPhongMaterial({ color: 0x0e3b2e });
       const face = new THREE.Mesh(faceGeom, faceMat);
       face.position.set(0, 0, 13.3);
       face.rotation.x = Math.PI / 2;
@@ -88,7 +88,7 @@ export default function InspectCanvas({ rewardType = "gold" }) {
 
       // Frame
       const frameGeom = new THREE.CylinderGeometry(1.2, 1.2, 32, 8);
-      const frameMat = new THREE.MeshPhongMaterial({ color: 0x0a4d45, metalness: 0.8 });
+      const frameMat = new THREE.MeshPhongMaterial({ color: 0x0b5d43, metalness: 0.8 });
       
       const bar1 = new THREE.Mesh(frameGeom, frameMat);
       bar1.rotation.z = Math.PI / 6;
@@ -104,7 +104,7 @@ export default function InspectCanvas({ rewardType = "gold" }) {
 
       // Seat/Tank
       const bodyGeom = new THREE.BoxGeometry(18, 5, 6);
-      const bodyMat = new THREE.MeshPhongMaterial({ color: 0x65b300, flatShading: true });
+      const bodyMat = new THREE.MeshPhongMaterial({ color: 0xc9a34a, flatShading: true });
       const body = new THREE.Mesh(bodyGeom, bodyMat);
       body.position.set(0, 4, 0);
       group.add(body);
@@ -131,8 +131,8 @@ export default function InspectCanvas({ rewardType = "gold" }) {
       // Cup
       const cupGeom = new THREE.ConeGeometry(12, 16, 8);
       const cupMat = new THREE.MeshPhongMaterial({
-        color: 0x8cd83d,
-        emissive: 0x0a4d45,
+        color: 0xe0c26a,
+        emissive: 0x0b5d43,
         wireframe: true,
         transparent: true,
         opacity: 0.8
@@ -173,9 +173,9 @@ export default function InspectCanvas({ rewardType = "gold" }) {
         group.add(spike);
         activeMeshes.push(spike);
 
-        // Gem sphere on top of spike
+        // Gem sphere on top of spike - Emerald Gems!
         const gemGeom = new THREE.SphereGeometry(1.2, 8, 8);
-        const gemMat = new THREE.MeshPhongMaterial({ color: 0x8cd83d, emissive: 0x0a4d45 });
+        const gemMat = new THREE.MeshPhongMaterial({ color: 0x0b5d43, emissive: 0x07211a });
         const gem = new THREE.Mesh(gemGeom, gemMat);
         gem.position.set(x, 6, z);
         group.add(gem);

@@ -65,7 +65,7 @@ export default function LoginPage() {
       <div className="w-full max-w-lg relative z-10 flex flex-col gap-8">
         <div className="flex justify-center">
           <Link href="/">
-            <GFTLogo className="h-10 w-auto" light={true} />
+            <GFTLogo className="h-20 w-auto" light={true} />
           </Link>
         </div>
 
