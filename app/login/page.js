@@ -40,7 +40,7 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const res = await login(identifier, password);
+      const res = await login(identifier.trim(), password.trim());
       setLoading(false);
       if (res && !res.success) {
         setError(res.error || "Invalid username or password.");
