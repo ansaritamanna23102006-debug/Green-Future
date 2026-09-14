@@ -64,10 +64,14 @@ export default function OffersPage() {
       {/* Posters Grid */}
       <section className="py-20 max-w-7xl mx-auto px-6 w-full flex-1">
         {filteredPosters.length === 0 ? (
-          <div className="text-center py-20 flex flex-col items-center justify-center text-gft-deep/50 gap-4">
-            <ImageIcon size={48} className="opacity-40" />
-            <h3 className="text-lg font-bold">No posters found</h3>
-            <p className="text-xs">No media files match this category yet.</p>
+          <div className="text-center py-24 px-6 max-w-lg mx-auto flex flex-col items-center justify-center bg-white border border-gft-gray-light rounded-3xl shadow-sm text-gft-deep gap-3">
+            <div className="w-14 h-14 rounded-2xl bg-gft-light flex items-center justify-center text-gft-deep/40">
+              <ImageIcon size={28} />
+            </div>
+            <h3 className="text-lg font-bold text-gft-deep">No active corporate promotions published.</h3>
+            <p className="text-xs text-gft-deep/60 leading-relaxed">
+              Official corporate promotions, events, and incentive campaigns will be published here once formally authorized by management.
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

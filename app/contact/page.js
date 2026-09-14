@@ -153,7 +153,7 @@ export default function ContactPage() {
                   type="text"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Alexander Pierce"
+                  placeholder="Enter your full name"
                   className="bg-gft-light border border-gft-gray-light rounded-xl px-4 py-3 text-[14px] outline-none focus:border-gft-primary"
                   required
                 />

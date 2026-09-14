@@ -6,6 +6,8 @@ import { dashboardStats, chartDataRevenue, chartDataRegistrations, activityFeed 
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+
 export default function SuperAdminDashboard() {
   const feedRef = useRef(null);
   const [supplyMetrics, setSupplyMetrics] = useState({
@@ -24,7 +26,7 @@ export default function SuperAdminDashboard() {
   const fetchSupplyMetrics = async () => {
     try {
       const token = localStorage.getItem("gft_token");
-      const res = await fetch("http://localhost:5000/api/v1/admin/token-supply", {
+      const res = await fetch(`${API_URL}/admin/token-supply`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();

@@ -438,7 +438,7 @@ export default function RegisterPage() {
                   <input
                     type="text"
                     name="fullName"
-                    placeholder="Alexander Pierce"
+                    placeholder="Enter your full legal name"
                     value={formData.fullName}
                     onChange={handleChange}
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white outline-none focus:border-gft-primary"

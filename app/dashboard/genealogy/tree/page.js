@@ -7,16 +7,16 @@ import ReactFlow, {
   useNodesState,
   useEdgesState,
   Handle,
-  Position
+  Position,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { Search, GitBranch, Coins, Award } from "lucide-react";
+import { Search, GitBranch, Coins, Award, RefreshCw } from "lucide-react";
 import { useApp } from "@/lib/context/AppContext";
 
 // Custom node rendering component
 function CustomNode({ data }) {
   const isActive = data.status === "Active";
-  const initials = data.name.split(" ").map((n) => n[0]).join("");
+  const initials = (data.name || "GFT").split(" ").map((n) => n[0]).join("");
 
   return (
     <div className={`p-4.5 rounded-3xl border transition-all duration-300 min-w-[210px] shadow-xl text-left relative overflow-hidden group hover:scale-[1.03] hover:shadow-gft-primary/20 ${
@@ -70,7 +70,7 @@ function CustomNode({ data }) {
         </div>
         <div className="flex flex-col min-w-0">
           <h4 className={`text-xs font-extrabold truncate transition-colors ${isActive ? "text-white group-hover:text-gft-accent" : "text-zinc-300"}`}>{data.name}</h4>
-          <p className={`text-[9px] font-semibold tracking-wider ${isActive ? "text-white/40" : "text-zinc-450 text-zinc-400"}`}>{data.memberId}</p>
+          <p className={`text-[9px] font-semibold tracking-wider ${isActive ? "text-white/40" : "text-zinc-400"}`}>{data.memberId}</p>
         </div>
       </div>
       
@@ -81,7 +81,7 @@ function CustomNode({ data }) {
             <Coins className="h-3.5 w-3.5 text-gft-accent/70" />
             Package
           </span>
-          <span className={`font-extrabold ${isActive ? "text-gft-accent" : "text-zinc-300"}`}>${data.package}</span>
+          <span className={`font-extrabold ${isActive ? "text-gft-accent" : "text-zinc-300"}`}>{data.package}</span>
         </div>
         <div className="flex justify-between items-center text-[10px]">
           <span className="text-white/45 flex items-center gap-1.5">
@@ -103,54 +103,104 @@ function CustomNode({ data }) {
 }
 
 const nodeTypes = {
-  customNode: CustomNode
+  customNode: CustomNode,
 };
 
 export default function GenealogyTreePage() {
   const { user } = useApp();
   const [mounted, setMounted] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const [searchTreeQuery, setSearchTreeQuery] = useState("");
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [baseNodes, setBaseNodes] = useState([]);
 
-  const initialNodes = [
-    { id: "1", type: "customNode", position: { x: 260, y: 20 }, data: { name: "Alexander Pierce", memberId: "GFT908127", status: "Active", designation: "Emerald Director", package: "2500", wing: "Root" } },
-    { id: "2", type: "customNode", position: { x: 80, y: 180 }, data: { name: "Elena Rostova", memberId: "GFT100201", status: "Active", designation: "Emerald Manager", package: "2500", wing: "Left" } },
-    { id: "3", type: "customNode", position: { x: 440, y: 180 }, data: { name: "Siddharth Kumar", memberId: "GFT100340", status: "Active", designation: "Ruby Director", package: "1000", wing: "Right" } },
-    { id: "4", type: "customNode", position: { x: -30, y: 340 }, data: { name: "Marcus Aurelius", memberId: "GFT100098", status: "Active", designation: "Sapphire Executive", package: "500", wing: "Left" } },
-    { id: "5", type: "customNode", position: { x: 180, y: 340 }, data: { name: "Sarah Jenkins", memberId: "GFT100112", status: "Active", designation: "Associate", package: "100", wing: "Right" } },
-    { id: "6", type: "customNode", position: { x: 330, y: 340 }, data: { name: "Chloe Dupont", memberId: "GFT100155", status: "Inactive", designation: "Associate", package: "100", wing: "Left" } },
-    { id: "7", type: "customNode", position: { x: 540, y: 340 }, data: { name: "Zahir Al-Hassan", memberId: "GFT100412", status: "Active", designation: "Sapphire Executive", package: "500", wing: "Right" } }
-  ];
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
-  const initialEdges = [
-    { id: "e1-2", source: "1", target: "2", animated: true, style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" } },
-    { id: "e1-3", source: "1", target: "3", animated: true, style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" } },
-    { id: "e2-4", source: "2", target: "4", animated: true, style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" } },
-    { id: "e2-5", source: "2", target: "5", animated: true, style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" } },
-    { id: "e3-6", source: "3", target: "6", animated: false, style: { stroke: "#3f3f46", strokeWidth: 1.5 } },
-    { id: "e3-7", source: "3", target: "7", animated: true, style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" } }
-  ];
+  const fetchBinaryTree = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("gft_token");
+      if (!token) return;
+
+      const res = await fetch(`${API_URL}/genealogy/binary-tree?depth=4`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+
+      if (data.status === "success" && data.data) {
+        const treeRoot = data.data;
+        const generatedNodes = [];
+        const generatedEdges = [];
+
+        const traverse = (node, depth, x, y, parentId, wing, xOffset) => {
+          if (!node) return;
+          const id = node.userId || `temp-${Math.random()}`;
+
+          generatedNodes.push({
+            id,
+            type: "customNode",
+            position: { x, y },
+            data: {
+              name: node.name || "Member",
+              memberId: node.userId || "GFT",
+              status: node.status === "active" ? "Active" : "Inactive",
+              designation: (node.rank && node.rank !== "none") ? node.rank.toUpperCase() : "MEMBER",
+              package: node.activePackageName || "None",
+              wing,
+            },
+          });
+
+          if (parentId) {
+            generatedEdges.push({
+              id: `e-${parentId}-${id}`,
+              source: parentId,
+              target: id,
+              animated: true,
+              style: { stroke: "#65B300", strokeWidth: 2, strokeDasharray: "5, 5" },
+            });
+          }
+
+          if (node.left) {
+            traverse(node.left, depth + 1, x - xOffset, y + 160, id, "Left", xOffset / 1.8);
+          }
+          if (node.right) {
+            traverse(node.right, depth + 1, x + xOffset, y + 160, id, "Right", xOffset / 1.8);
+          }
+        };
+
+        traverse(treeRoot, 1, 320, 20, null, "Root", 220);
+        setNodes(generatedNodes);
+        setEdges(generatedEdges);
+        setBaseNodes(generatedNodes);
+      }
+    } catch (err) {
+      console.error("Failed to load binary tree:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
-    setNodes(initialNodes);
-    setEdges(initialEdges);
+    fetchBinaryTree();
   }, []);
 
   const handleSearchTree = (e) => {
     e.preventDefault();
-    if (!searchTreeQuery) {
-      setNodes(initialNodes);
+    if (!searchTreeQuery.trim()) {
+      setNodes(baseNodes);
       return;
     }
-    const filteredNodes = initialNodes.map((node) => {
-      const match = node.data.name.toLowerCase().includes(searchTreeQuery.toLowerCase()) ||
-                    node.data.memberId.toLowerCase().includes(searchTreeQuery.toLowerCase());
+    const filteredNodes = baseNodes.map((node) => {
+      const match =
+        node.data.name.toLowerCase().includes(searchTreeQuery.toLowerCase()) ||
+        node.data.memberId.toLowerCase().includes(searchTreeQuery.toLowerCase());
       return {
         ...node,
-        style: match ? { border: "3px solid #8CD83D", boxShadow: "0 0 20px #8CD83D" } : {}
+        style: match
+          ? { border: "3px solid #8CD83D", boxShadow: "0 0 20px #8CD83D" }
+          : {},
       };
     });
     setNodes(filteredNodes);
@@ -160,9 +210,21 @@ export default function GenealogyTreePage() {
 
   return (
     <div className="flex flex-col gap-8 select-none text-white">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white">Graphical Binary Tree</h1>
-        <p className="text-white/60 text-sm mt-1">Visualize independent partner nodes and active placements across wings.</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Graphical Binary Tree</h1>
+          <p className="text-white/60 text-sm mt-1">
+            Authoritative binary placement structure and active partner nodes across compensation wings.
+          </p>
+        </div>
+        <button
+          onClick={fetchBinaryTree}
+          disabled={loading}
+          className="flex items-center gap-2 bg-gft-card-dark border border-gft-border-dark px-4 py-2 rounded-xl text-xs font-bold hover:bg-gft-primary/20 transition-colors"
+        >
+          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          Refresh Tree
+        </button>
       </div>
 
       <div className="bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-sm overflow-hidden flex flex-col">
@@ -196,7 +258,14 @@ export default function GenealogyTreePage() {
         </div>
 
         {/* React Flow Viewport */}
-        <div className="h-[520px] w-full bg-zinc-950">
+        <div className="h-[560px] w-full bg-zinc-950 relative">
+          {loading && (
+            <div className="absolute inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-10">
+              <div className="flex items-center gap-2 text-sm text-gft-accent font-bold">
+                <RefreshCw className="animate-spin" size={16} /> Loading Network Structure...
+              </div>
+            </div>
+          )}
           <ReactFlow
             nodes={nodes}
             edges={edges}

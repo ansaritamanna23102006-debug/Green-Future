@@ -7,41 +7,59 @@ import {
   CheckCircle, 
   XCircle, 
   Clock, 
-  HelpCircle,
-  TrendingUp,
-  Wallet,
-  ArrowRight,
-  ShieldCheck,
-  Building,
-  Coins
+  HelpCircle, 
+  Wallet, 
+  ArrowRight, 
+  ShieldCheck, 
+  Coins, 
+  Lock, 
+  Info 
 } from "lucide-react";
 import { useApp } from "@/lib/context/AppContext";
 import Link from "next/link";
 
 export default function WithdrawPage() {
-  const { user, withdrawals = [], requestWithdrawal } = useApp();
+  const { user, withdrawals = [], requestWithdrawal, authoritativeRules } = useApp();
   const [amount, setAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("USDT_WALLET");
-  const [paymentDetails, setPaymentDetails] = useState("");
+  const [destinationType, setDestinationType] = useState("USDT");
+  const [destinationReference, setDestinationReference] = useState("");
   
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
 
+  // Check if withdrawal rule is confirmed and executable
+  const isWithdrawalExecutable = authoritativeRules?.withdrawalStatus?.executable === true;
+
   // Pre-fill USDT address if selected and user has configured it
   useEffect(() => {
-    if (paymentMethod === "USDT_WALLET" && user?.usdtWallet) {
-      setPaymentDetails(user.usdtWallet);
-    } else {
-      setPaymentDetails("");
+    if (destinationType === "USDT" && user?.usdtWallet) {
+      setDestinationReference(user.usdtWallet);
+    } else if (destinationType === "USDT" && !destinationReference) {
+      setDestinationReference("");
     }
-  }, [paymentMethod, user]);
+  }, [destinationType, user]);
+
+  const kycStatus = String(user?.kyc?.status || user?.kycStatus?.status || "").toUpperCase();
+  const isKycApproved = kycStatus === "APPROVED";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMsg("");
     setErrorMsg("");
+
+    if (!isWithdrawalExecutable) {
+      setErrorMsg("Withdrawal limits and fee structure are pending final business confirmation.");
+      setLoading(false);
+      return;
+    }
+
+    if (!isKycApproved) {
+      setErrorMsg("KYC must be APPROVED before requesting withdrawals.");
+      setLoading(false);
+      return;
+    }
 
     const withdrawalAmount = parseFloat(amount);
     if (isNaN(withdrawalAmount) || withdrawalAmount <= 0) {
@@ -50,27 +68,59 @@ export default function WithdrawPage() {
       return;
     }
 
-    if (withdrawalAmount > (user?.balance?.personalIncome || 0)) {
-      setErrorMsg("Insufficient funds in your income wallet.");
+    const availableBalance = user?.wallet?.availableRupees 
+      ? parseFloat(user.wallet.availableRupees) 
+      : (user?.balance?.personalIncome || 0);
+
+    if (withdrawalAmount > availableBalance) {
+      setErrorMsg("Insufficient available funds in your ledger wallet.");
       setLoading(false);
       return;
     }
 
-    const res = await requestWithdrawal(withdrawalAmount, paymentMethod, paymentDetails);
+    const res = await requestWithdrawal(withdrawalAmount, destinationType, destinationReference);
     
     setLoading(false);
     if (res.success) {
-      setSuccessMsg("Withdrawal request submitted successfully!");
+      setSuccessMsg("Withdrawal request submitted successfully and logged to audit ledger.");
       setAmount("");
-      if (paymentMethod !== "USDT_WALLET") {
-        setPaymentDetails("");
+      if (destinationType !== "USDT") {
+        setDestinationReference("");
       }
     } else {
-      setErrorMsg(res.error || "Failed to submit withdrawal request. Please try again.");
+      // Map safe backend error codes
+      const errorMap = {
+        REQUIRES_CLIENT_CONFIRMATION: "Business plan or withdrawal rules are pending client confirmation.",
+        KYC_REQUIRED: "Approved KYC identity verification is required before requesting payouts.",
+        RULE_NOT_EXECUTABLE: "Withdrawal engine is currently non-executable under Phase 0 governance.",
+        PAYMENT_REQUIRED: "Active package activation is required to authorize withdrawals.",
+        PROVIDER_NOT_CONFIGURED: "Payout provider is not currently active.",
+        WITHDRAWAL_BLOCKED: "Withdrawals are currently blocked by system safety controls.",
+      };
+
+      setErrorMsg(errorMap[res.errorCode] || res.error || "Withdrawal limits and fee structure are pending final business confirmation.");
     }
   };
 
-  const isKycApproved = user?.kyc?.status === "approved";
+  const getStatusBadge = (status) => {
+    const s = String(status).toUpperCase();
+    switch (s) {
+      case "COMPLETED":
+        return { color: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "Completed", icon: CheckCircle };
+      case "APPROVED":
+        return { color: "bg-emerald-50 text-emerald-700 border-emerald-200", label: "Approved", icon: CheckCircle };
+      case "PROCESSING":
+        return { color: "bg-indigo-50 text-indigo-700 border-indigo-200", label: "Processing", icon: Clock };
+      case "UNDER_REVIEW":
+        return { color: "bg-blue-50 text-blue-700 border-blue-200", label: "Under Review", icon: Clock };
+      case "REJECTED":
+        return { color: "bg-rose-50 text-rose-700 border-rose-200", label: "Rejected", icon: XCircle };
+      case "CANCELLED":
+        return { color: "bg-gray-100 text-gray-600 border-gray-200", label: "Cancelled", icon: XCircle };
+      default:
+        return { color: "bg-amber-50 text-amber-700 border-amber-200", label: "Requested", icon: Clock };
+    }
+  };
 
   return (
     <div className="flex flex-col gap-8 select-none">
@@ -81,47 +131,61 @@ export default function WithdrawPage() {
           Withdrawal Portal
         </h1>
         <p className="text-gft-deep/60 text-sm mt-1">
-          Withdraw earnings securely from your Income Wallet to your USDT wallet or Bank account.
+          Internal double-entry ledger withdrawal requests. Subject to strict Phase 0 business confirmation and verified KYC.
         </p>
       </div>
 
+      {/* Governance Banner */}
+      {!isWithdrawalExecutable && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-start gap-3 shadow-sm">
+          <AlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <strong className="block font-bold">Withdrawal Configuration Pending</strong>
+            <p>
+              Withdrawal limits and fee structure are pending final business confirmation. Financial submissions are paused until corporate and provider sign-off.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Income Wallet Balance */}
+        {/* Available Ledger Balance */}
         <div className="bg-white border border-gft-gray-light p-6 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">Income Wallet Balance</span>
+            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">Available Ledger Balance</span>
             <div className="p-2 rounded-xl bg-gft-primary/10 text-gft-primary">
               <Wallet className="h-5 w-5" />
             </div>
           </div>
           <div>
             <h3 className="text-3xl font-extrabold text-gft-deep tracking-tight">
-              ₹{(user?.balance?.personalIncome || 0).toLocaleString()}
+              ₹{user?.wallet?.availableRupees || (user?.balance?.personalIncome || 0).toLocaleString()}
             </h3>
-            <span className="text-[10px] font-bold text-gft-primary block mt-2">Available for immediate withdrawal</span>
+            <span className="text-[10px] font-bold text-gft-deep/50 block mt-2">
+              Authoritative backend balance: {user?.wallet?.availablePaisa || 0} Paisa
+            </span>
           </div>
         </div>
 
         {/* KYC Status Card */}
         <div className="bg-white border border-gft-gray-light p-6 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">KYC Status</span>
+            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">KYC Verification Gate</span>
             <div className={`p-2 rounded-xl ${isKycApproved ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"}`}>
               <ShieldCheck className="h-5 w-5" />
             </div>
           </div>
           <div>
-            <h3 className={`text-xl font-bold tracking-tight uppercase ${isKycApproved ? "text-emerald-600" : "text-amber-500"}`}>
-              {user?.kyc?.status ? user.kyc.status : "Not Submitted"}
+            <h3 className={`text-xl font-bold tracking-tight uppercase ${isKycApproved ? "text-emerald-600" : "text-amber-600"}`}>
+              {kycStatus || "NOT_STARTED"}
             </h3>
-            {!isKycApproved && (
+            {!isKycApproved ? (
               <Link href="/dashboard/profile/kyc" className="text-[10px] font-bold text-gft-primary hover:text-gft-accent flex items-center gap-1 mt-2">
                 Complete Verification <ArrowRight className="h-3 w-3" />
               </Link>
-            )}
-            {isKycApproved && (
-              <span className="text-[10px] font-bold text-emerald-600 block mt-2">Withdrawals Enabled</span>
+            ) : (
+              <span className="text-[10px] font-bold text-emerald-600 block mt-2">KYC Identity Verified</span>
             )}
           </div>
         </div>
@@ -129,20 +193,18 @@ export default function WithdrawPage() {
         {/* Withdrawal Settings Card */}
         <div className="bg-white border border-gft-gray-light p-6 rounded-2xl shadow-sm flex flex-col justify-between">
           <div className="flex justify-between items-start mb-4">
-            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">Withdrawal Terms</span>
+            <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/50">Rule Policy Status</span>
             <div className="p-2 rounded-xl bg-gft-light text-gft-dark">
               <HelpCircle className="h-5 w-5" />
             </div>
           </div>
-          <div className="text-xs leading-relaxed text-gft-deep/80 font-medium">
-            <div className="flex justify-between border-b border-gft-light pb-1.5 mb-1.5">
-              <span>Min. Withdrawal</span>
-              <span className="font-bold text-gft-deep">₹500</span>
-            </div>
-            <div className="flex justify-between">
-              <span>Processing Time</span>
-              <span className="font-bold text-gft-primary">12-24 Hours</span>
-            </div>
+          <div className="text-xs text-gft-deep/80 leading-relaxed font-medium">
+            <span className="inline-block text-[11px] text-amber-800 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-md font-semibold mb-2">
+              Pending Business Confirmation
+            </span>
+            <p className="text-[11px] text-gft-deep/60">
+              Withdrawal limits and fee structure are pending final business confirmation.
+            </p>
           </div>
         </div>
       </div>
@@ -161,7 +223,7 @@ export default function WithdrawPage() {
                 <span>KYC VERIFICATION REQUIRED</span>
               </div>
               <p className="text-[11px] leading-relaxed text-amber-800/80 font-medium">
-                Under financial regulations, you must complete and receive approval for your KYC verification before requesting any payouts.
+                Under financial safety regulations, your KYC status must be APPROVED before requesting any payouts.
               </p>
               <Link 
                 href="/dashboard/profile/kyc" 
@@ -186,33 +248,32 @@ export default function WithdrawPage() {
                 </div>
               )}
 
-              {/* Payment Method */}
+              {/* Destination Type */}
               <div className="flex flex-col gap-2">
-                <label className="text-xs uppercase font-bold text-gft-deep/50">Payment Method</label>
+                <label className="text-xs uppercase font-bold text-gft-deep/50">Destination Type</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("USDT_WALLET")}
+                    onClick={() => setDestinationType("USDT")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                      paymentMethod === "USDT_WALLET"
+                      destinationType === "USDT"
                         ? "bg-gft-primary/5 border-gft-primary text-gft-primary"
                         : "bg-white border-gft-gray-light text-gft-deep/60 hover:bg-gft-light"
                     }`}
                   >
                     <Coins className="h-4 w-4" />
-                    USDT Wallet
+                    USDT (TRC-20)
                   </button>
                   <button
                     type="button"
-                    onClick={() => setPaymentMethod("BANK_TRANSFER")}
+                    onClick={() => setDestinationType("INR_BANK")}
                     className={`flex items-center justify-center gap-2 py-3 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
-                      paymentMethod === "BANK_TRANSFER"
+                      destinationType === "INR_BANK"
                         ? "bg-gft-primary/5 border-gft-primary text-gft-primary"
                         : "bg-white border-gft-gray-light text-gft-deep/60 hover:bg-gft-light"
                     }`}
                   >
-                    <Building className="h-4 w-4" />
-                    Bank Transfer
+                    Bank Account
                   </button>
                 </div>
               </div>
@@ -222,56 +283,61 @@ export default function WithdrawPage() {
                 <label className="text-xs uppercase font-bold text-gft-deep/50">Withdrawal Amount (₹)</label>
                 <input
                   type="number"
-                  min="500"
                   step="any"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Minimum ₹500"
+                  placeholder="Enter amount in INR"
                   className="w-full bg-gft-light border border-gft-gray-light rounded-xl px-4 py-3 text-[13px] font-semibold outline-none focus:border-gft-primary"
                   required
                 />
               </div>
 
-              {/* Payment Details */}
+              {/* Destination Reference */}
               <div className="flex flex-col gap-2">
                 <label className="text-xs uppercase font-bold text-gft-deep/50">
-                  {paymentMethod === "USDT_WALLET" ? "USDT Address (USDT-TRC20)" : "Bank Transfer Details"}
+                  {destinationType === "USDT" ? "USDT Address (TRC-20)" : "Bank Account Details / IFSC"}
                 </label>
                 <textarea
-                  value={paymentDetails}
-                  onChange={(e) => setPaymentDetails(e.target.value)}
+                  value={destinationReference}
+                  onChange={(e) => setDestinationReference(e.target.value)}
                   placeholder={
-                    paymentMethod === "USDT_WALLET"
+                    destinationType === "USDT"
                       ? "Enter your TRC-20 USDT Wallet Address"
-                      : "Account Holder Name:\nAccount Number:\nIFSC Code:\nBank Name & Branch:"
+                      : "Account Holder Name:\nAccount Number:\nIFSC Code:\nBank Name:"
                   }
-                  rows={4}
+                  rows={3}
                   className="w-full bg-gft-light border border-gft-gray-light rounded-xl px-4 py-3 text-[13px] font-medium outline-none focus:border-gft-primary resize-none"
                   required
                 />
-                {paymentMethod === "USDT_WALLET" && !user?.usdtWallet && (
-                  <p className="text-[10px] text-gft-deep/45 font-medium leading-relaxed">
-                    You can configure a default USDT address in your{" "}
-                    <Link href="/dashboard/profile/usdt-wallet" className="text-gft-primary font-bold hover:underline">
-                      Profile settings
-                    </Link>
-                    .
+              </div>
+
+              {/* Submit / Execution Disabled Button */}
+              <div className="flex flex-col gap-2 mt-2">
+                <button
+                  type="submit"
+                  disabled={!isWithdrawalExecutable || loading}
+                  className={`w-full font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl flex justify-center items-center gap-2 transition-all ${
+                    !isWithdrawalExecutable
+                      ? "bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed shadow-none"
+                      : "bg-gft-primary hover:bg-gft-accent text-white cursor-pointer shadow-lg shadow-gft-primary/10"
+                  }`}
+                >
+                  {loading ? (
+                    <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : !isWithdrawalExecutable ? (
+                    <span className="flex items-center gap-1.5">
+                      <Lock size={13} /> Submissions Disabled (Pending Confirmation)
+                    </span>
+                  ) : (
+                    "Request Withdrawal"
+                  )}
+                </button>
+                {!isWithdrawalExecutable && (
+                  <p className="text-[10px] text-center text-amber-800/80 font-medium">
+                    Withdrawal limits and fee structure are pending final business confirmation.
                   </p>
                 )}
               </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full mt-2 bg-gft-primary hover:bg-gft-accent text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-xl cursor-pointer transition-colors flex justify-center items-center gap-2 shadow-lg shadow-gft-primary/10"
-              >
-                {loading ? (
-                  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                ) : (
-                  "Request Withdrawal"
-                )}
-              </button>
             </form>
           )}
         </div>
@@ -294,64 +360,39 @@ export default function WithdrawPage() {
                 <thead>
                   <tr className="border-b border-gft-gray-light text-[10px] font-extrabold uppercase tracking-wider text-gft-deep/45 bg-gft-light/50">
                     <th className="py-3 px-4 rounded-l-xl">Requested Date</th>
-                    <th className="py-3 px-4">Payout Method</th>
+                    <th className="py-3 px-4">Destination</th>
                     <th className="py-3 px-4">Amount</th>
                     <th className="py-3 px-4">Status</th>
-                    <th className="py-3 px-4 rounded-r-xl">Details</th>
                   </tr>
                 </thead>
                 <tbody>
                   {withdrawals.map((w, index) => {
-                    let statusColor = "bg-amber-500/10 text-amber-600 border-amber-500/20";
-                    let statusText = "Pending";
-                    let StatusIcon = Clock;
-
-                    if (w.status === "approved") {
-                      statusColor = "bg-emerald-500/10 text-emerald-600 border-emerald-500/20";
-                      statusText = "Approved";
-                      StatusIcon = CheckCircle;
-                    } else if (w.status === "rejected") {
-                      statusColor = "bg-rose-500/10 text-rose-600 border-rose-500/20";
-                      statusText = "Rejected";
-                      StatusIcon = XCircle;
-                    } else if (w.status === "cancelled") {
-                      statusColor = "bg-gray-500/10 text-gray-600 border-gray-500/20";
-                      statusText = "Cancelled";
-                      StatusIcon = XCircle;
-                    }
+                    const badge = getStatusBadge(w.status);
+                    const BadgeIcon = badge.icon;
 
                     return (
                       <tr 
-                        key={w._id || index} 
+                        key={w.withdrawalId || w._id || index} 
                         className="border-b border-gft-gray-light last:border-0 hover:bg-gft-light/35 transition-colors"
                       >
                         <td className="py-4 px-4 font-bold text-gft-deep/60">
                           {new Date(w.createdAt).toLocaleDateString(undefined, {
                             year: "numeric",
                             month: "short",
-                            day: "numeric"
+                            day: "numeric",
                           })}
                         </td>
                         <td className="py-4 px-4 font-bold text-gft-deep">
-                          {w.paymentMethod === "USDT_WALLET" ? "USDT (TRC20)" : "Bank Transfer"}
+                          {w.destinationType || "USDT"}
                         </td>
-                        <td className="py-4 px-4 font-extrabold text-gft-primary">
-                          ₹{w.amount.toLocaleString()}
+                        <td className="py-4 px-4 font-black text-gft-primary">
+                          ₹{w.amountRupees || (w.amountPaisa ? (w.amountPaisa / 100).toFixed(2) : (w.amount || 0))}
                         </td>
                         <td className="py-4 px-4">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 border rounded-full text-[9px] font-bold uppercase tracking-wider ${statusColor}`}>
-                            <StatusIcon className="h-3 w-3" />
-                            {statusText}
+                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold border ${badge.color}`}>
+                            <BadgeIcon className="h-3 w-3" />
+                            {badge.label}
                           </span>
-                        </td>
-                        <td className="py-4 px-4 font-semibold text-gft-deep/45 max-w-[200px] truncate">
-                          {w.status === "rejected" && w.rejectReason ? (
-                            <span className="text-rose-600" title={w.rejectReason}>Reason: {w.rejectReason}</span>
-                          ) : w.status === "approved" && w.txHash ? (
-                            <span className="font-mono text-[10px]" title={w.txHash}>Hash: {w.txHash}</span>
-                          ) : (
-                            <span title={w.details}>{w.details}</span>
-                          )}
                         </td>
                       </tr>
                     );

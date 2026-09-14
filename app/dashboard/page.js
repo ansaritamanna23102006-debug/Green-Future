@@ -130,47 +130,39 @@ export default function DashboardPage() {
     }
   };
 
-  // Mock data for Recharts
+  // Neutralized chart data (zero mock income)
   const monthlyIncomeData = [
-    { name: "Jan", income: 2400 },
-    { name: "Feb", income: 3600 },
-    { name: "Mar", income: 5200 },
-    { name: "Apr", income: 4800 },
-    { name: "May", income: 8900 },
-    { name: "Jun", income: 12450 }
+    { name: "Jan", income: 0 },
+    { name: "Feb", income: 0 },
+    { name: "Mar", income: 0 },
+    { name: "Apr", income: 0 },
+    { name: "May", income: 0 },
+    { name: "Jun", income: 0 }
   ];
 
+  const totalTeamCount = user?.balance?.totalTeam || 0;
+  const tokenBal = user?.balance?.tokenBalance || 0;
+
   const teamGrowthData = [
-    { name: "Jan", members: 30 },
-    { name: "Feb", members: 55 },
-    { name: "Mar", members: 82 },
-    { name: "Apr", members: 110 },
-    { name: "May", members: 145 },
-    { name: "Jun", members: 184 }
+    { name: "Jan", members: 0 },
+    { name: "Feb", members: 0 },
+    { name: "Mar", members: 0 },
+    { name: "Apr", members: 0 },
+    { name: "May", members: 0 },
+    { name: "Jun", members: totalTeamCount }
   ];
 
   const tokenGrowthData = [
-    { name: "W1", tokens: 8000 },
-    { name: "W2", tokens: 15000 },
-    { name: "W3", tokens: 21000 },
-    { name: "W4", tokens: 30000 },
-    { name: "W5", tokens: 38000 },
-    { name: "W6", tokens: 45200 }
+    { name: "W1", tokens: 0 },
+    { name: "W2", tokens: 0 },
+    { name: "W3", tokens: 0 },
+    { name: "W4", tokens: 0 },
+    { name: "W5", tokens: 0 },
+    { name: "W6", tokens: tokenBal }
   ];
 
-  // Top 10 Payout List
-  const highestPayouts = [
-    { rank: 1, id: "GFT100045", name: "Vikram R. Malhotra", payout: 89200.00, status: "Disbursed" },
-    { rank: 2, id: "GFT100112", name: "Sarah Jenkins", payout: 74500.00, status: "Disbursed" },
-    { rank: 3, id: "GFT100004", name: "Chen Wei", payout: 62100.00, status: "Disbursed" },
-    { rank: 4, id: "GFT100201", name: "Elena Rostova", payout: 48920.00, status: "Disbursed" },
-    { rank: 5, id: "GFT100340", name: "Marcus Aurelius", payout: 39800.00, status: "Disbursed" },
-    { rank: 6, id: "GFT100098", name: "Aarav Sharma", payout: 35400.00, status: "Disbursed" },
-    { rank: 7, id: "GFT100155", name: "Chloe Dupont", payout: 28900.00, status: "Processing" },
-    { rank: 8, id: "GFT100412", name: "Zahir Al-Hassan", payout: 24500.00, status: "Disbursed" },
-    { rank: 9, id: "GFT100227", name: "Sophia Martinez", payout: 19800.00, status: "Disbursed" },
-    { rank: 10, id: "GFT100389", name: "John Dumont", payout: 15400.00, status: "Processing" }
-  ];
+  // Top Payout List: Neutralized (Zero mock earnings)
+  const highestPayouts = [];
 
   if (!mounted || !user) {
     return (
@@ -181,14 +173,14 @@ export default function DashboardPage() {
   }
 
   const cardItems = [
-    { title: "Personal Income", value: user.balance.personalIncome, prefix: "₹", icon: Wallet, growth: "+12.4%", isPositive: true },
-    { title: "Team Income", value: user.balance.teamIncome, prefix: "₹", icon: Users, growth: "+24.8%", isPositive: true },
-    { title: "Direct Income", value: user.balance.directIncome, prefix: "₹", icon: UserPlus, growth: "+8.2%", isPositive: true },
-    { title: "Matching Bonus", value: user.balance.bonus, prefix: "₹", icon: Award, growth: "+15.0%", isPositive: true },
-    { title: "Team Turnover", value: user.balance.turnover, prefix: "₹", icon: Briefcase, growth: "+31.2%", isPositive: true },
-    { title: "Total Team", value: user.balance.totalTeam, icon: Network, growth: "+14 members", isPositive: true },
-    { title: "Active Downlines", value: user.balance.activeTeam, icon: ShieldCheck, growth: "85.2% active", isPositive: true },
-    { title: "GFT Tokens", value: user.balance.tokenBalance, suffix: " GFT", icon: Coins, growth: "+5,200 GFT", isPositive: true }
+    { title: "Personal Income", value: user?.balance?.personalIncome || 0, prefix: "₹", icon: Wallet, growth: "Ledger", isPositive: true },
+    { title: "Team Income", value: user?.balance?.teamIncome || 0, prefix: "₹", icon: Users, growth: "Ledger", isPositive: true },
+    { title: "Direct Income", value: user?.balance?.directIncome || 0, prefix: "₹", icon: UserPlus, growth: "Ledger", isPositive: true },
+    { title: "Matching Bonus", value: user?.balance?.bonus || 0, prefix: "₹", icon: Award, growth: "Phase 0 Gated", isPositive: true },
+    { title: "Team Turnover", value: user?.balance?.turnover || 0, prefix: "₹", icon: Briefcase, growth: "Sales", isPositive: true },
+    { title: "Total Team", value: user?.balance?.totalTeam || 0, icon: Network, growth: `${user?.balance?.totalTeam || 0} members`, isPositive: true },
+    { title: "Active Downlines", value: user?.balance?.activeTeam || 0, icon: ShieldCheck, growth: `${user?.balance?.activeTeam || 0} active`, isPositive: true },
+    { title: "GFT Tokens", value: user?.balance?.tokenBalance || 0, suffix: " GFT", icon: Coins, growth: "Internal Ledger", isPositive: true }
   ];
 
   return (
@@ -347,32 +339,40 @@ export default function DashboardPage() {
               </tr>
             </thead>
             <tbody>
-              {highestPayouts.map((member) => (
-                <tr key={member.rank} className="border-b border-gft-border-dark last:border-0 hover:bg-white/5 transition-colors">
-                  <td className="py-4 px-4 font-bold text-white">
-                    {member.rank === 1 && "🥇 "}
-                    {member.rank === 2 && "🥈 "}
-                    {member.rank === 3 && "🥉 "}
-                    {member.rank > 3 && `#${member.rank}`}
-                  </td>
-                  <td className="py-4 px-4 font-semibold text-white/80">{member.id}</td>
-                  <td className="py-4 px-4 font-bold text-white">{member.name}</td>
-                  <td className="py-4 px-4 text-right font-extrabold text-gft-primary">
-                    ₹{member.payout.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                  </td>
-                  <td className="py-4 px-4 text-center">
-                    <span
-                      className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                        member.status === "Disbursed"
-                          ? "bg-gft-primary/20 text-gft-accent"
-                          : "bg-amber-500/20 text-amber-400"
-                      }`}
-                    >
-                      {member.status}
-                    </span>
+              {highestPayouts.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-8 text-center text-xs text-white/50">
+                    Live network payouts and commissions are currently paused pending Phase 0 business plan confirmation. Zero mock payouts displayed.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                highestPayouts.map((member) => (
+                  <tr key={member.rank} className="border-b border-gft-border-dark last:border-0 hover:bg-white/5 transition-colors">
+                    <td className="py-4 px-4 font-bold text-white">
+                      {member.rank === 1 && "🥇 "}
+                      {member.rank === 2 && "🥈 "}
+                      {member.rank === 3 && "🥉 "}
+                      {member.rank > 3 && `#${member.rank}`}
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-white/80">{member.id}</td>
+                    <td className="py-4 px-4 font-bold text-white">{member.name}</td>
+                    <td className="py-4 px-4 text-right font-extrabold text-gft-primary">
+                      ₹{member.payout.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    </td>
+                    <td className="py-4 px-4 text-center">
+                      <span
+                        className={`inline-flex px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                          member.status === "Disbursed"
+                            ? "bg-gft-primary/20 text-gft-accent"
+                            : "bg-amber-500/20 text-amber-400"
+                        }`}
+                      >
+                        {member.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

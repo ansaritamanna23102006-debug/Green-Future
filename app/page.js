@@ -28,12 +28,14 @@ gsap.registerPlugin(ScrollTrigger);
 
 
 // Count Up Component using GSAP
-function CountUp({ end, duration = 1.5, suffix = "", prefix = "" }) {
+function CountUp({ end, duration = 1.5, suffix = "", prefix = "", isText = false }) {
   const [count, setCount] = useState(0);
   const countRef = useRef({ val: 0 });
 
   useEffect(() => {
+    if (isText) return;
     const endVal = parseFloat(end.toString().replace(/,/g, ""));
+    if (isNaN(endVal)) return;
     gsap.to(countRef.current, {
       val: endVal,
       duration: duration,
@@ -42,7 +44,11 @@ function CountUp({ end, duration = 1.5, suffix = "", prefix = "" }) {
         setCount(countRef.current.val);
       }
     });
-  }, [end, duration]);
+  }, [end, duration, isText]);
+
+  if (isText) {
+    return <span>{prefix}{end}{suffix}</span>;
+  }
 
   const formatted = Math.round(count).toLocaleString(undefined, {
     maximumFractionDigits: 0
@@ -110,78 +116,78 @@ export default function LandingPage() {
   const testimonialContainerRef = useRef(null);
 
   const stats = [
-    { label: "Active Members", value: 124800, suffix: "+", icon: Users2 },
-    { label: "Total Payout", value: 34500000, prefix: "$", suffix: "+", icon: TrendingUp },
-    { label: "Team Growth Rate", value: 145, suffix: "% MoM", icon: Award },
-    { label: "GFT Token Distribution", value: 5800000, suffix: " GFT", icon: Coins },
+    { label: "Ledger Engine", value: "Double-Entry", isText: true, icon: ShieldCheck },
+    { label: "Genealogy Matrix", value: "Multi-Tier", isText: true, icon: Users2 },
+    { label: "KYC Verification", value: "AML Compliant", isText: true, icon: Award },
+    { label: "Platform Status", value: "Audit Mode", isText: true, icon: Zap },
   ];
 
   const opportunityCards = [
     {
-      title: "Direct Income",
-      description: "Earn 10% instant commission on package activations purchased directly through your sponsor link.",
-      benefit: "10% Flat Rate",
+      title: "Direct Sponsor Income",
+      description: "Unilevel referral structure rewarding direct sponsor relationships (Levels 1–3 Confirmed). Subject to final business plan activation.",
+      benefit: "Rule Confirmed (L1–L3)",
       icon: Briefcase,
       color: "from-emerald-500/10 to-teal-500/10"
     },
     {
-      title: "Team Binary Income",
-      description: "Build left/right network wings and qualify for a 12% team volume matching bonus paid out weekly.",
-      benefit: "12% Binary Match",
+      title: "Team Binary Placement",
+      description: "Authoritative binary tree placement engine and team volume tracking across Left and Right organizational wings.",
+      benefit: "Pending Activation",
       icon: Users,
       color: "from-green-500/10 to-emerald-600/10"
     },
     {
-      title: "Rank Bonus Pool",
-      description: "Secure a share of GFT's global leadership turnover pool. Ranks from Emerald to Crown Ambassador.",
-      benefit: "Up to 5% Global Pool",
+      title: "Turnover Rank Funds",
+      description: "Leadership designations (Silver through Chairman) backed by verified turnover milestones.",
+      benefit: "Rule Confirmed",
       icon: ShieldCheck,
       color: "from-teal-600/10 to-gft-dark/10"
     },
     {
-      title: "Token Staking Rewards",
-      description: "Stake GFT native tokens to earn up to 18% APY, boosting passive yield as the community network grows.",
-      benefit: "18% Max APY",
+      title: "Passive Turnover Tiers",
+      description: "10-tier organizational performance recognition system for established community builders.",
+      benefit: "Pending Activation",
       icon: Coins,
       color: "from-gft-primary/10 to-gft-accent/10"
     }
   ];
 
   const roadmapSteps = [
-    { step: "01", title: "Free Registration", desc: "Sign up via sponsor link and establish your node in the global hierarchy." },
-    { step: "02", title: "Choose Package", desc: "Select an eco-tech package ranging from ₹3,000 up to ₹1,00,000 to unlock yields." },
-    { step: "03", title: "Build Your Team", desc: "Leverage GFT's automated placement engine to register downlines and match wings." },
-    { step: "04", title: "Earn Incomes", desc: "Receive direct, matching, and ranking pool bonuses directly to your USDT wallet." },
-    { step: "05", title: "Earn GFT Tokens", desc: "Unlock native blockchain tokens, redeemable for green energy stakes and governance." },
+    { step: "01", title: "Member Registration", desc: "Register via sponsor ID and establish your node in the network hierarchy." },
+    { step: "02", title: "KYC Verification", desc: "Submit verified identity documents (Aadhaar, PAN, Passbook) for compliance review." },
+    { step: "03", title: "Package Selection", desc: "Select from official GFT packages once final business confirmation is active." },
+    { step: "04", title: "Build Your Team", desc: "Share your sponsor link to build direct referrals and binary placement wings." },
+    { step: "05", title: "Audited Ledger Tracking", desc: "View all income postings, reservations, and settlements through an immutable double-entry ledger." },
   ];
 
   const testimonials = [
     {
-      quote: "GFT completely reshaped my perspective on MLM. The digital tokens offer actual utility in renewable energy projects, and the dashboard is incredibly clean. I reached Diamond rank in under 6 months!",
-      author: "Rajesh K. Verma",
-      role: "Diamond Director, India",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80"
+      quote: "Every transaction is recorded via double-entry journal entries and ledger postings, ensuring mathematically balanced accounts with zero direct wallet tampering.",
+      author: "Double-Entry Accounting Standard",
+      role: "Financial Integrity Engine",
+      image: null
     },
     {
-      quote: "The instant USDT withdrawal policy is a game-changer. I don't have to wait weeks for administrative approvals. Highly recommend Green Future Tech to any serious team builder.",
-      author: "Samantha Miller",
-      role: "Emerald Manager, South Africa",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80"
+      quote: "Financial safety gates ensure that unconfirmed packages, withdrawal limits, or calculation tiers cannot execute live financial side-effects until client verification.",
+      author: "Business Execution Gatekeeper",
+      role: "Compliance & Safety Engine",
+      image: null
     },
     {
-      quote: "Using the GFT tokens to claim stakes in carbon offset protocols is highly innovative. This platform bridges green tech and community networking beautifully.",
-      author: "Hiroshi Sato",
-      role: "Platinum Director, Japan",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&h=150&q=80"
+      quote: "Complete separation of Unilevel Sponsor Trees and Binary Placement Trees guarantees deterministic genealogy traversal and cycle-free organization.",
+      author: "Genealogy Matrix Architecture",
+      role: "Network Hierarchy Engine",
+      image: null
     }
   ];
 
   const faqs = [
-    { q: "What is Green Future Tech?", a: "Green Future Tech (GFT) is a premium network marketing platform that leverages digital financing, blockchain tokens, and referral compensation architectures to fund green technology products and carbon offset initiatives." },
-    { q: "How do I qualify for team binary payouts?", a: "To qualify for binary matching bonuses, you need to sponsor at least one active member in your Left Wing and one active member in your Right Wing, with active packages of ₹3,000 or more." },
-    { q: "What are GFT Tokens used for?", a: "GFT tokens represent shares of green energy production assets within the ecosystem. Members can stake them for yield, convert them to USDT at exchange values, or use them to claim carbon offset certificates." },
-    { q: "How fast are withdrawal requests processed?", a: "USDT withdrawals are automated via smart contracts and processed instantly (usually within 5-15 minutes depending on network confirmations)." },
-    { q: "Is KYC verification mandatory?", a: "Yes. In compliance with international anti-money laundering (AML) laws, KYC verification (Aadhaar/PAN/Identity proof) must be approved before initiating USDT withdrawals exceeding ₹40,000." }
+    { q: "What is Green Future Technology?", a: "Green Future Technology (GFT) is an enterprise network marketing and digital platform engineered with an immutable double-entry accounting engine, strict KYC compliance gates, and structured affiliate compensation models." },
+    { q: "How is financial integrity maintained?", a: "All financial operations—including package activations, income allocations, and withdrawal reservations—are recorded through balanced journal entries where total debits strictly equal total credits." },
+    { q: "What is the status of packages and return rates?", a: "Package prices and return rate configurations currently carry 'Requires Client Confirmation' status pending final business activation. Live purchasing and payouts are paused until confirmation." },
+    { q: "How does the withdrawal process work?", a: "Withdrawals follow an auditable state machine (Requested → Under Review → Approved → Processing → Completed). Approved KYC verification and sufficient ledger-held balance are strictly required." },
+    { q: "Is KYC verification mandatory?", a: "Yes. All members must have their identity documents (Aadhaar, PAN, Bank Passbook) reviewed and approved before financial withdrawal requests or package activations can proceed." }
   ];
 
   // GSAP Animations on mount
@@ -309,16 +315,16 @@ export default function LandingPage() {
                 {/* Quick trust metrics */}
                 <div className="grid grid-cols-3 gap-6 pt-8 mt-4 border-t border-white/10 w-full max-w-lg">
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">100%</h4>
-                    <p className="text-white/60 text-xs">Automated Payouts</p>
+                    <h4 className="text-xl font-bold text-gft-accent">Double-Entry</h4>
+                    <p className="text-white/60 text-xs">Immutable Ledger</p>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">Secured</h4>
-                    <p className="text-white/60 text-xs">USDT Contracts</p>
+                    <h4 className="text-xl font-bold text-gft-accent">Verified</h4>
+                    <p className="text-white/60 text-xs">KYC Gatekeeper</p>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">24/7</h4>
-                    <p className="text-white/60 text-xs">Direct Support</p>
+                    <h4 className="text-xl font-bold text-gft-accent">Role-Based</h4>
+                    <p className="text-white/60 text-xs">Security Architecture</p>
                   </div>
                 </div>
               </div>
@@ -369,8 +375,8 @@ export default function LandingPage() {
                       <rect x="300" y="280" width="120" height="70" rx="10" fill="#082F2C" stroke="#104C48" strokeWidth="1" />
                       <path d="M315 330L335 315L355 325L395 295" stroke="#8CD83D" strokeWidth="2.5" strokeLinecap="round" />
                       <circle cx="395" cy="295" r="3" fill="#8CD83D" />
-                      <text x="315" y="303" fill="#FFFFFF" fontSize="9" fontWeight="bold" fontFamily="sans-serif">USDT Yield</text>
-                      <text x="315" y="340" fill="#8CD83D" fontSize="8" fontFamily="sans-serif">+145%</text>
+                      <text x="315" y="303" fill="#FFFFFF" fontSize="9" fontWeight="bold" fontFamily="sans-serif">GFT Engine</text>
+                      <text x="315" y="340" fill="#8CD83D" fontSize="8" fontFamily="sans-serif">Audited</text>
                     </g>
                   </svg>
                 </div>
@@ -387,7 +393,7 @@ export default function LandingPage() {
                   {cmsContent?.about?.heading || "Fusing Green Innovation with Network Architecture"}
                 </h2>
                 <p className="text-gft-deep/75 text-[16px] leading-relaxed">
-                  {cmsContent?.about?.description || "Green Future Tech is dedicated to building sustainable investment platforms for everyone. The company invests the collected capital into various channels, primarily stock and forex markets, to distribute profits and ensure long-term stability for our affiliates."}
+                  {cmsContent?.about?.description || "Green Future Technology is an enterprise software platform engineered with an immutable double-entry accounting engine, strict KYC compliance gates, and auditable network compensation structures."}
                 </p>
               </div>
 
@@ -421,7 +427,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl font-bold text-gft-deep">Why Choose GFT</h3>
                   <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    Unlike traditional MLM schemes, GFT yields are backed by real-world financial allocations and forex markets, generating concrete yields that power token values.
+                    GFT enforces rigorous ledger accounting principles where every financial transaction is backed by balanced double-entry journal postings with zero arbitrary mutations.
                   </p>
                 </div>
               </div>
@@ -433,12 +439,12 @@ export default function LandingPage() {
             <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gft-primary/5 rounded-full blur-[100px] pointer-events-none" />
             <div className="max-w-7xl mx-auto px-6 relative z-10">
               <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Investment Tiers</span>
+                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Startup Packages</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Explore GFT Eco-Tech Investment Packages
+                  GFT Startup Packages Overview
                 </h2>
                 <p className="text-gft-deep/75 text-[16px] leading-relaxed">
-                  Participate in our financial pipelines with options tailored for students, personal growth, and business executives. All options feature monthly yields and native token multipliers.
+                  Review startup package proposals. All package parameters currently carry &quot;Pending final business confirmation&quot; status and are paused for live execution.
                 </p>
               </div>
 
@@ -446,52 +452,52 @@ export default function LandingPage() {
                 {/* Student Preview */}
                 <div className="bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
                   <div>
-                    <span className="px-3 py-1 bg-emerald-100 text-emerald-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Student Category</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Student Lite</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹1,200</p>
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Student Tiers</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹3,000 – ₹10,000</p>
                     <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 8% Monthly</span></div>
-                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 1,200 GFT</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
                     </div>
                   </div>
-                  <Link href="/packages/student" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
-                    View Student Packages <ArrowRight size={14} />
+                  <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                    View Package Catalog <ArrowRight size={14} />
                   </Link>
                 </div>
 
                 {/* Personal Preview */}
                 <div className="bg-gradient-to-tr from-teal-500/5 to-gft-primary/5 border border-gft-primary/30 p-8 rounded-3xl flex flex-col justify-between shadow-md relative overflow-hidden group hover:shadow-xl transition-all">
-                  <div className="absolute top-4 right-4 bg-gft-primary text-white text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Most Popular</div>
+                  <div className="absolute top-4 right-4 bg-amber-500 text-white text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Unconfirmed</div>
                   <div>
-                    <span className="px-3 py-1 bg-gft-primary/10 text-gft-primary text-[10px] font-bold uppercase rounded-full tracking-wider">Personal Category</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Personal Star</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹20,000</p>
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Personal Tiers</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹20,000 – ₹40,000</p>
                     <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 12.5% Monthly</span></div>
-                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 7,500 GFT</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
                     </div>
                   </div>
-                  <Link href="/packages/personal" className="w-full text-center bg-gft-primary text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-accent transition-all shadow-md">
-                    View Personal Packages <ArrowRight size={14} />
+                  <Link href="/packages" className="w-full text-center bg-gft-primary text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-accent transition-all shadow-md">
+                    View Package Catalog <ArrowRight size={14} />
                   </Link>
                 </div>
 
                 {/* Business Preview */}
                 <div className="bg-gradient-to-tr from-amber-500/5 to-gft-primary/10 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
                   <div>
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Business Category</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Business Elite</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Starting from ₹1,50,000</p>
+                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                    <h3 className="text-2xl font-black text-gft-deep mt-4">Business Tiers</h3>
+                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹50,000 – ₹1,00,000</p>
                     <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Yield Rate:</span><span className="font-bold text-gft-primary">Up to 15% Monthly</span></div>
-                      <div className="flex justify-between"><span>Token Reward:</span><span className="font-bold text-gft-accent">Up to 25,000 GFT</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months</span></div>
+                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
                     </div>
                   </div>
-                  <Link href="/packages/business" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
-                    View Business Packages <ArrowRight size={14} />
+                  <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                    View Package Catalog <ArrowRight size={14} />
                   </Link>
                 </div>
               </div>
@@ -506,10 +512,10 @@ export default function LandingPage() {
               <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
                 <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Affiliate Plan</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Unrivaled Compensation Architecture
+                  Compensation & Network Architecture
                 </h2>
                 <p className="text-gft-deep/75 text-[16px]">
-                  GFT offers four powerful income pipelines, structured to reward direct sponsors, network team builders, and long-term token holders.
+                  GFT features four core compensation categories, structured to reward direct sponsors, network team builders, and leadership turnover.
                 </p>
               </div>
 
@@ -533,8 +539,8 @@ export default function LandingPage() {
                     </div>
 
                     <div className="relative z-10 pt-4 border-t border-gft-deep/5 flex justify-between items-center">
-                      <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/45">Yield Rate</span>
-                      <span className="text-sm font-extrabold text-gft-primary">{card.benefit}</span>
+                      <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/45">Status</span>
+                      <span className="text-xs font-extrabold text-gft-primary">{card.benefit}</span>
                     </div>
                   </div>
                 ))}
@@ -548,10 +554,10 @@ export default function LandingPage() {
               <div className="text-center max-w-3xl mx-auto mb-20 flex flex-col gap-4">
                 <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Your Journey</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Step-by-Step Growth Roadmap
+                  Step-by-Step Onboarding Roadmap
                 </h2>
                 <p className="text-gft-deep/75 text-[16px]">
-                  We facilitate seamless entry. Follow our linear acceleration path to unlock direct affiliate payouts and passive clean energy yields.
+                  Follow our structured compliance and acceleration path to establish your node in the network.
                 </p>
               </div>
 
@@ -588,7 +594,7 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Income Benefits Statistics (Counters) */}
+          {/* Platform Architecture Statistics */}
           <section className="py-20 bg-gft-dark text-white relative">
             <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
               {stats.map((stat, idx) => {
@@ -598,8 +604,8 @@ export default function LandingPage() {
                     <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-accent mb-4">
                       <Icon className="h-6 w-6" />
                     </div>
-                    <h3 className="text-3xl font-extrabold tracking-tight mb-2 text-white">
-                      <CountUp end={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
+                    <h3 className="text-2xl font-extrabold tracking-tight mb-2 text-white">
+                      <CountUp end={stat.value} prefix={stat.prefix || ""} suffix={stat.suffix || ""} isText={stat.isText} />
                     </h3>
                     <p className="text-white/60 text-sm font-medium">{stat.label}</p>
                   </div>
@@ -608,13 +614,13 @@ export default function LandingPage() {
             </div>
           </section>
 
-          {/* Testimonials Section */}
+          {/* Architecture Principles Section */}
           <section className="py-24 bg-white relative">
             <div className="max-w-7xl mx-auto px-6">
               <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">User Success</span>
+                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Engine Integrity</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Trusted by 100K+ Active Affiliates
+                  Engineering Principles & Standards
                 </h2>
               </div>
 
@@ -623,14 +629,10 @@ export default function LandingPage() {
                   ref={testimonialContainerRef}
                   className="bg-gft-light/50 border border-gft-gray-light p-10 sm:p-12 rounded-3xl relative text-center flex flex-col items-center gap-6"
                 >
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-gft-primary">
-                    <img
-                      src={testimonials[activeTestimonial].image}
-                      alt={testimonials[activeTestimonial].author}
-                      className="w-full h-full object-cover"
-                    />
+                  <div className="w-16 h-16 rounded-2xl bg-gft-primary/10 border-2 border-gft-primary flex items-center justify-center text-gft-primary">
+                    <ShieldCheck className="h-8 w-8" />
                   </div>
-                  <p className="text-gft-deep/80 text-lg sm:text-xl italic font-normal leading-relaxed">
+                  <p className="text-gft-deep/80 text-lg sm:text-xl font-medium leading-relaxed">
                     &ldquo;{testimonials[activeTestimonial].quote}&rdquo;
                   </p>
                   <div>
@@ -693,9 +695,9 @@ export default function LandingPage() {
           {/* CTA Section */}
           <section className="py-20 bg-gradient-to-br from-gft-dark to-gft-deep text-white relative text-center">
             <div className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-6">
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Claim Your Digital Carbon Stakes?</h2>
+              <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Join Green Future Technology?</h2>
               <p className="text-white/70 max-w-lg leading-relaxed text-[15px]">
-                Sign up today to receive 100 GFT signup bonus tokens and start building your sustainable binary network wings.
+                Register your account to establish your node in the network hierarchy and review verified platform features.
               </p>
               <Link
                 href="/register"
