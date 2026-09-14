@@ -16,6 +16,11 @@ import { AppProvider } from "@/lib/context/AppContext";
 export const metadata = {
   title: "Green Future Tech (GFT) - Network Marketing & Fintech Platform",
   description: "Join Green Future Tech and unlock wealth opportunities through smart networking, digital assets, and team growth.",
+  icons: {
+    icon: "/logo-icon.png",
+    shortcut: "/logo-icon.png",
+    apple: "/logo-icon.png",
+  },
 };
 
 export default function RootLayout({ children }) {

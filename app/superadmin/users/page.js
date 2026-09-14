@@ -3,6 +3,7 @@ import { useMemo, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import DataTable from '@/components/admin/DataTable';
 import { UserPlus, Eye, Edit, Trash2, Ban, CheckCircle, X } from 'lucide-react';
+import { API_URL } from '@/lib/apiConfig';
 
 export default function UsersManagement() {
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function UsersManagement() {
     try {
       setLoading(true);
       const token = localStorage.getItem("gft_token");
-      const res = await fetch("http://localhost:5000/api/v1/admin/users", {
+      const res = await fetch(`${API_URL}/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -50,7 +51,7 @@ export default function UsersManagement() {
     try {
       const token = localStorage.getItem("gft_token");
       const nextStatus = currentStatus === "Active" ? "suspended" : "active";
-      const res = await fetch("http://localhost:5000/api/v1/admin/users/status", {
+      const res = await fetch(`${API_URL}/admin/users/status`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -73,7 +74,7 @@ export default function UsersManagement() {
     if (!window.confirm(`Are you sure you want to permanently delete user ${userId}?`)) return;
     try {
       const token = localStorage.getItem("gft_token");
-      const res = await fetch(`http://localhost:5000/api/v1/admin/users/${userId}`, {
+      const res = await fetch(`${API_URL}/admin/users/${userId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -101,7 +102,7 @@ export default function UsersManagement() {
     e.preventDefault();
     try {
       const token = localStorage.getItem("gft_token");
-      const res = await fetch(`http://localhost:5000/api/v1/admin/users/${editModalUser.id}`, {
+      const res = await fetch(`${API_URL}/admin/users/${editModalUser.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

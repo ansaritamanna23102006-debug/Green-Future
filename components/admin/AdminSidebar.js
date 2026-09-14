@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import gsap from 'gsap';
+import GFTLogo from '@/components/GFTLogo';
 import { 
   LayoutDashboard, Users, FileCheck, Package, DollarSign, Coins, 
   Network, Award, Gift, ArrowDownToLine, ReceiptText, Tags, 
@@ -65,19 +66,16 @@ export default function AdminSidebar({ role = 'superadmin' }) {
         collapsed ? "w-[80px]" : "w-[260px]"
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-[#0A4D45] sticky top-0 bg-[#062F2D] z-10">
+      <div className="flex items-center justify-between p-3.5 border-b border-[#0A4D45] sticky top-0 bg-[#062F2D] z-10">
         {!collapsed && (
-          <div className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
-            <div className="w-8 h-8 rounded-full bg-[#65B300] flex items-center justify-center font-bold">G</div>
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-[#8CD83D] to-[#65B300] bg-clip-text text-transparent">
-              GFT {role === 'superadmin' ? 'Super Admin' : 'Admin'}
-            </span>
-          </div>
+          <Link href={role === 'superadmin' ? '/superadmin/dashboard' : '/admin/dashboard'} className="flex items-center gap-2 overflow-hidden whitespace-nowrap">
+            <GFTLogo className="h-9 w-auto shrink-0" showText={true} light={true} />
+          </Link>
         )}
         {collapsed && (
-          <div className="w-full flex justify-center">
-            <div className="w-8 h-8 rounded-full bg-[#65B300] flex items-center justify-center font-bold">G</div>
-          </div>
+          <Link href={role === 'superadmin' ? '/superadmin/dashboard' : '/admin/dashboard'} className="w-full flex justify-center">
+            <GFTLogo className="h-8 w-auto shrink-0" showText={false} light={true} />
+          </Link>
         )}
       </div>
 

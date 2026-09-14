@@ -104,8 +104,8 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
       >
         {/* Sidebar Header */}
         <div className="p-5 border-b border-gft-border-dark flex items-center justify-between">
-          <Link href="/dashboard" className="overflow-hidden">
-            <GFTLogo className="h-16 w-auto shrink-0" showText={!isCollapsed} light={true} />
+          <Link href="/dashboard" className="overflow-hidden flex items-center justify-center">
+            <GFTLogo className="h-11 w-auto shrink-0" showText={!isCollapsed} light={true} />
           </Link>
 
           {/* Collapse Button for desktop */}

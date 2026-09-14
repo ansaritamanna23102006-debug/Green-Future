@@ -43,8 +43,8 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
-        <Link href="/" className="flex items-center animate-fade-in hover:drop-shadow-[0_0_12px_rgba(201,163,74,0.5)] transition-all duration-300">
-          <GFTLogo className="h-16 md:h-20 w-auto" light={true} />
+        <Link href="/" className="flex items-center animate-fade-in transition-all duration-300">
+          <GFTLogo className="h-11 md:h-13 w-auto" light={true} />
         </Link>
 
         {/* Desktop Nav Links */}
