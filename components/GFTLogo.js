@@ -38,9 +38,9 @@ export default function GFTLogo({
   return (
     <div className={`relative inline-flex items-center gap-3 select-none ${className}`}>
       <Image
-        src="/logo.png"
+        src="/GreenFutureLogo.png"
         alt="Green Future Technology — Grow | Trade | Prosper"
-        width={300}
+        width={360}
         height={300}
         priority
         className="h-full w-auto object-contain rounded-lg drop-shadow-[0_0_15px_rgba(101,179,0,0.25)] transition-transform duration-300 hover:scale-[1.02]"

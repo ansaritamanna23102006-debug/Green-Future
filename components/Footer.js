@@ -14,9 +14,6 @@ export default function Footer() {
         {/* Brand & Description */}
         <div className="flex flex-col gap-5">
           <GFTLogo className="h-16 w-auto" light={true} />
-          <p className="text-white/70 text-[14px] leading-relaxed max-w-sm mt-2">
-            Pioneering digital wealth creation through smart network marketing, sustainable blockchain technology, and robust community empowerment.
-          </p>
           <div className="flex gap-4 mt-2">
             {[
               {

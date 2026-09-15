@@ -84,22 +84,22 @@ export default function VisionMissionPage() {
           className="bg-gft-card-dark text-white rounded-3xl p-10 md:p-12 border border-gft-border-dark flex flex-col gap-6"
         >
           <span className="text-gft-accent font-bold text-xs uppercase tracking-wider">Our Core Commitment</span>
-          <h3 className="text-2xl font-black">Trust, Innovation, and Sustainability</h3>
+          <h3 className="text-2xl font-black">Gaming, Technology & Community Ecosystem</h3>
           <p className="text-white/70 text-sm leading-relaxed max-w-3xl">
-            At GFT, we believe in giving back to the planet while growing structural wealth. We stand committed to complete corporate transparency, utilizing smart contract ledgers and forex-backed investment diversification to ensure long-term stability and consistent payout delivery.
+            GFT is building a future-focused digital ecosystem that brings together gaming, technology and community. From utility-driven GFT Tokens to upcoming gaming platforms, our goal is to create an ecosystem designed for participation, engagement and long-term growth.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-6 border-t border-white/10 pt-8 text-center sm:text-left">
             <div>
-              <span className="text-gft-accent font-bold text-lg">100% Secure</span>
-              <p className="text-xs text-white/50 mt-1">Audit-verified smart contract parameters</p>
+              <span className="text-gft-accent font-bold text-lg">Next-Gen Gaming</span>
+              <p className="text-xs text-white/50 mt-1">Immersive platforms built for user engagement</p>
             </div>
             <div>
-              <span className="text-gft-accent font-bold text-lg">Fintech Growth</span>
-              <p className="text-xs text-white/50 mt-1">Stakes diversified in stocks & forex</p>
+              <span className="text-gft-accent font-bold text-lg">GFT Utility</span>
+              <p className="text-xs text-white/50 mt-1">Utility-driven tokens powering digital rewards</p>
             </div>
             <div>
-              <span className="text-gft-accent font-bold text-lg">Affiliate Care</span>
-              <p className="text-xs text-white/50 mt-1">24-hour support verification turns</p>
+              <span className="text-gft-accent font-bold text-lg">Community Focus</span>
+              <p className="text-xs text-white/50 mt-1">Designed for sustainable long-term growth</p>
             </div>
           </div>
         </div>

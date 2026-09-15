@@ -34,6 +34,11 @@ export default function Navbar() {
     { name: "Offers", href: "/offers" },
   ];
 
+  const isLinkActive = (href) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
@@ -49,16 +54,27 @@ export default function Navbar() {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              className="text-[15px] font-medium transition-colors relative group py-2 text-white/95 hover:text-gft-primary"
-            >
-              {link.name}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 transition-all duration-300 group-hover:w-full bg-gft-primary" />
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.href);
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                className={`text-[15px] transition-all relative group py-2 ${
+                  active
+                    ? "text-gft-primary font-bold drop-shadow-[0_0_8px_rgba(101,179,0,0.5)]"
+                    : "text-white/80 hover:text-white font-medium"
+                }`}
+              >
+                {link.name}
+                <span
+                  className={`absolute bottom-0 left-0 h-0.5 transition-all duration-300 bg-gft-primary ${
+                    active ? "w-full shadow-[0_0_8px_rgba(101,179,0,0.8)]" : "w-0 group-hover:w-full"
+                  }`}
+                />
+              </Link>
+            );
+          })}
         </nav>
 
         {/* CTA Buttons */}
@@ -89,17 +105,27 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 border-b p-6 flex flex-col gap-5 shadow-2xl transition-all duration-300 bg-gft-card-dark border-gft-border-dark text-white">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className="text-base font-semibold transition-colors text-white hover:text-gft-primary"
-            >
-              {link.name}
-            </Link>
-          ))}
+        <div className="md:hidden absolute top-full left-0 right-0 border-b p-6 flex flex-col gap-3 shadow-2xl transition-all duration-300 bg-gft-card-dark border-gft-border-dark text-white">
+          {navLinks.map((link) => {
+            const active = isLinkActive(link.href);
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
+                className={`text-base transition-all px-4 py-2.5 rounded-xl flex items-center justify-between ${
+                  active
+                    ? "bg-gft-primary/15 text-gft-primary border border-gft-primary/30 font-bold"
+                    : "text-white/80 hover:text-white hover:bg-white/5 font-medium"
+                }`}
+              >
+                <span>{link.name}</span>
+                {active && (
+                  <span className="w-2 h-2 rounded-full bg-gft-primary shadow-[0_0_6px_rgba(101,179,0,0.8)]" />
+                )}
+              </Link>
+            );
+          })}
           <hr className="border-gft-border-dark" />
           <div className="flex flex-col gap-3">
             <Link
