@@ -23,7 +23,8 @@ import {
   Wallet,
   Settings,
   ShieldCheck,
-  ArrowDownToLine
+  ArrowDownToLine,
+  X
 } from "lucide-react";
 import { useApp } from "@/lib/context/AppContext";
 import GFTLogo from "./GFTLogo";
@@ -114,6 +115,15 @@ export default function Sidebar({ isCollapsed, setIsCollapsed, isMobileOpen, set
             className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-white/60 hover:text-white"
           >
             {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
+          </button>
+
+          {/* Close Button for mobile */}
+          <button
+            onClick={() => setIsMobileOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg hover:bg-white/10 text-white/70 hover:text-white cursor-pointer"
+            aria-label="Close menu"
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
 

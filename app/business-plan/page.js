@@ -213,8 +213,8 @@ export default function BusinessPlanPage() {
             <p className="text-xs sm:text-sm text-gft-deep/60">Authoritative status of each referral tier.</p>
           </div>
 
-          <div className="overflow-hidden rounded-2xl border border-gft-gray-light">
-            <table className="w-full text-left text-sm border-collapse">
+          <div className="overflow-x-auto rounded-2xl border border-gft-gray-light bg-white shadow-sm">
+            <table className="w-full text-left text-sm border-collapse min-w-[550px]">
               <thead>
                 <tr className="bg-gft-light border-b border-gft-gray-light text-[11px] font-extrabold uppercase tracking-wider text-gft-deep/60">
                   <th className="py-3.5 px-5">Level</th>
@@ -386,8 +386,8 @@ export default function BusinessPlanPage() {
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-gft-gray-light bg-white shadow-sm">
-          <table className="w-full text-left text-sm border-collapse">
+        <div className="overflow-x-auto rounded-2xl border border-gft-gray-light bg-white shadow-sm">
+          <table className="w-full text-left text-sm border-collapse min-w-[600px]">
             <thead>
               <tr className="bg-gft-light border-b border-gft-gray-light text-[11px] font-extrabold uppercase tracking-wider text-gft-deep/60">
                 <th className="py-4 px-6">Rank</th>

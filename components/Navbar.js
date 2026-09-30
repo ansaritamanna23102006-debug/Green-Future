@@ -47,20 +47,20 @@ export default function Navbar() {
           : "bg-transparent py-6"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 flex justify-between items-center">
         <Link href="/" className="flex items-center animate-fade-in transition-all duration-300">
-          <GFTLogo className="h-11 md:h-13 w-auto" light={true} />
+          <GFTLogo className="h-10 sm:h-11 md:h-12 w-auto shrink-0" light={true} />
         </Link>
 
         {/* Desktop Nav Links */}
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden md:flex items-center gap-3.5 lg:gap-6 xl:gap-8">
           {navLinks.map((link) => {
             const active = isLinkActive(link.href);
             return (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-[15px] transition-all relative group py-2 ${
+                className={`text-[13px] lg:text-[14.5px] xl:text-[15px] transition-all relative group py-2 whitespace-nowrap ${
                   active
                     ? "text-gft-primary font-bold drop-shadow-[0_0_8px_rgba(101,179,0,0.5)]"
                     : "text-white/80 hover:text-white font-medium"
@@ -78,19 +78,19 @@ export default function Navbar() {
         </nav>
 
         {/* CTA Buttons */}
-        <div className="hidden md:flex items-center gap-4">
+        <div className="hidden md:flex items-center gap-2 lg:gap-3.5 shrink-0">
           <Link
             href="/login"
-            className="text-[15px] font-semibold transition-colors px-4 py-2 text-white/90 hover:text-gft-primary"
+            className="text-[13px] lg:text-[14px] font-semibold transition-colors px-3 py-2 text-white/90 hover:text-gft-primary whitespace-nowrap"
           >
             Login
           </Link>
           <Link
             href="/register"
-            className="bg-gft-primary hover:bg-gft-accent text-gft-deep text-[14px] font-bold px-6 py-2.5 rounded-full flex items-center gap-1.5 transition-all shadow-md hover:shadow-lg shadow-gft-primary/20 hover:-translate-y-0.5 gold-shine-sweep"
+            className="bg-gft-primary hover:bg-gft-accent text-gft-deep text-[13px] lg:text-[14px] font-bold px-4 lg:px-6 py-2 lg:py-2.5 rounded-full flex items-center gap-1.5 transition-all shadow-md hover:shadow-lg shadow-gft-primary/20 hover:-translate-y-0.5 gold-shine-sweep whitespace-nowrap"
           >
             Join Now
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-3.5 w-3.5 lg:h-4 lg:w-4" />
           </Link>
         </div>
 
@@ -105,7 +105,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 border-b p-6 flex flex-col gap-3 shadow-2xl transition-all duration-300 bg-gft-card-dark border-gft-border-dark text-white">
+        <div className="md:hidden absolute top-full left-0 right-0 border-b p-5 sm:p-6 flex flex-col gap-3 shadow-2xl transition-all duration-300 bg-gft-card-dark border-gft-border-dark text-white max-h-[calc(100vh-5rem)] overflow-y-auto">
           {navLinks.map((link) => {
             const active = isLinkActive(link.href);
             return (

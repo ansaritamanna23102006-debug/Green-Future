@@ -54,13 +54,13 @@ export default function PackagesPage() {
       </div>
 
       {/* Tab Selectors */}
-      <section className="py-8 bg-white border-b border-gft-gray-light sticky top-[72px] z-20 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 flex justify-center gap-4">
+      <section className="py-4 sm:py-8 bg-white border-b border-gft-gray-light sticky top-[72px] z-20 shadow-sm">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 flex justify-center gap-2 sm:gap-4 overflow-x-auto">
           {["student", "personal", "business"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`py-3 px-6 rounded-full text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border ${
+              className={`py-2.5 sm:py-3 px-3.5 sm:px-6 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all cursor-pointer border whitespace-nowrap shrink-0 ${
                 activeTab === tab
                   ? "bg-gft-primary text-white border-gft-primary shadow-md"
                   : "bg-gft-light border-gft-gray-light text-gft-deep hover:border-gft-primary/45"

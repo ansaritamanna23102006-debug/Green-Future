@@ -313,18 +313,18 @@ export default function LandingPage() {
                 </div>
 
                 {/* Quick trust metrics */}
-                <div className="grid grid-cols-3 gap-6 pt-8 mt-4 border-t border-white/10 w-full max-w-lg">
+                <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 sm:pt-8 mt-4 border-t border-white/10 w-full max-w-lg">
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">Double-Entry</h4>
-                    <p className="text-white/60 text-xs">Immutable Ledger</p>
+                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Double-Entry</h4>
+                    <p className="text-white/60 text-[10px] sm:text-xs">Immutable Ledger</p>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">Verified</h4>
-                    <p className="text-white/60 text-xs">KYC Gatekeeper</p>
+                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Verified</h4>
+                    <p className="text-white/60 text-[10px] sm:text-xs">KYC Gatekeeper</p>
                   </div>
                   <div>
-                    <h4 className="text-xl font-bold text-gft-accent">Role-Based</h4>
-                    <p className="text-white/60 text-xs">Security Architecture</p>
+                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Role-Based</h4>
+                    <p className="text-white/60 text-[10px] sm:text-xs">Security Arch</p>
                   </div>
                 </div>
               </div>
@@ -563,27 +563,27 @@ export default function LandingPage() {
 
               {/* Timeline */}
               <div className="relative">
-                <div className="absolute left-8 lg:left-1/2 top-0 bottom-0 w-0.5 bg-gft-primary/20 -translate-x-1/2" />
+                <div className="absolute left-4 sm:left-8 lg:left-1/2 top-0 bottom-0 w-0.5 bg-gft-primary/20 -translate-x-1/2" />
 
-                <div className="flex flex-col gap-12">
+                <div className="flex flex-col gap-8 sm:gap-12">
                   {roadmapSteps.map((step, idx) => {
                     const isEven = idx % 2 === 0;
                     return (
                       <div key={idx} className={`flex flex-col lg:flex-row items-start ${isEven ? "" : "lg:flex-row-reverse"} relative`}>
                         {/* Node Dot */}
-                        <div className="absolute left-8 lg:left-1/2 w-8 h-8 rounded-full bg-white border-4 border-gft-primary shadow-md -translate-x-1/2 flex items-center justify-center z-10">
-                          <div className="w-2 h-2 rounded-full bg-gft-primary" />
+                        <div className="absolute left-4 sm:left-8 lg:left-1/2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border-4 border-gft-primary shadow-md -translate-x-1/2 flex items-center justify-center z-10">
+                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gft-primary" />
                         </div>
 
                         {/* Content Box */}
-                        <div className={`w-full lg:w-1/2 pl-16 lg:pl-0 ${isEven ? "lg:pr-16 lg:text-right" : "lg:pl-16 lg:text-left"}`}>
+                        <div className={`w-full lg:w-1/2 pl-10 sm:pl-16 lg:pl-0 ${isEven ? "lg:pr-16 lg:text-right" : "lg:pl-16 lg:text-left"}`}>
                           <div
                             ref={(el) => (roadmapStepsRef.current[idx] = el)}
-                            className="bg-gft-light/50 border border-gft-gray-light p-6 rounded-2xl inline-block max-w-md shadow-sm"
+                            className="bg-gft-light/50 border border-gft-gray-light p-5 sm:p-6 rounded-2xl block lg:inline-block w-full max-w-md shadow-sm"
                           >
-                            <span className="text-3xl font-extrabold text-gft-primary/20 block mb-1">{step.step}</span>
-                            <h3 className="text-lg font-bold text-gft-deep mb-2">{step.title}</h3>
-                            <p className="text-gft-deep/70 text-[13.5px] leading-relaxed">{step.desc}</p>
+                            <span className="text-2xl sm:text-3xl font-extrabold text-gft-primary/20 block mb-1">{step.step}</span>
+                            <h3 className="text-base sm:text-lg font-bold text-gft-deep mb-2">{step.title}</h3>
+                            <p className="text-gft-deep/70 text-xs sm:text-[13.5px] leading-relaxed">{step.desc}</p>
                           </div>
                         </div>
                       </div>

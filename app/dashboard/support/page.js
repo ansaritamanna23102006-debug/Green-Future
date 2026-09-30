@@ -157,7 +157,7 @@ export default function SupportPage() {
           </h3>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm border-collapse">
+            <table className="w-full text-left text-sm border-collapse min-w-[500px]">
               <thead>
                 <tr className="border-b border-gft-gray-light text-[10px] font-extrabold uppercase tracking-wider text-gft-deep/45 bg-gft-light/50">
                   <th className="py-3 px-3 rounded-l-xl">Ticket ID</th>

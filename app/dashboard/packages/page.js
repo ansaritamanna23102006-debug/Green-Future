@@ -230,7 +230,7 @@ export default function PackagesPage() {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full text-left text-xs border-collapse min-w-[620px]">
             <thead>
               <tr className="border-b border-white/5 text-[10px] font-extrabold uppercase tracking-wider text-white/40 bg-white/5">
                 <th className="py-3 px-4 rounded-l-xl">Order ID</th>

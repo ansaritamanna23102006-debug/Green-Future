@@ -88,7 +88,7 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-3 w-80 bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
+            <div className="absolute right-0 mt-3 w-[calc(100vw-2.5rem)] max-w-sm sm:w-80 bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
               <div className="p-4 border-b border-gft-border-dark flex justify-between items-center bg-gft-dark-bg">
                 <span className="font-bold text-white text-sm">Notifications</span>
                 {unreadCount > 0 && (
@@ -158,7 +158,7 @@ export default function DashboardNavbar({ isCollapsed, setIsMobileOpen }) {
 
             {/* Profile Dropdown */}
             {showProfile && (
-              <div className="absolute right-0 mt-3 w-56 bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
+              <div className="absolute right-0 mt-3 w-[calc(100vw-2.5rem)] max-w-[240px] bg-gft-card-dark border border-gft-border-dark rounded-2xl shadow-xl overflow-hidden z-50 text-white">
                 <div className="p-4 border-b border-gft-border-dark bg-gft-dark-bg">
                   <p className="text-xs text-white/60">Logged in as</p>
                   <p className="text-sm font-bold text-white truncate">{user.email}</p>

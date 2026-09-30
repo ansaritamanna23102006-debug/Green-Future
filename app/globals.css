@@ -43,6 +43,13 @@
   background: #65B300;
 }
 
+/* Mobile Viewport & Alignment Protection */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* Custom Utilities */
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);

@@ -98,10 +98,10 @@ export default function HeroCanvas() {
       opacity: 0.25
     });
 
-    // We will dynamically connect nodes close to each other in the animation loop
+    // We dynamically connect nodes close to each other with a preallocated buffer
+    const maxLines = 500;
+    const linePositions = new Float32Array(maxLines * 6);
     const lineGeom = new THREE.BufferGeometry();
-    const lineIndices = [];
-    const linePositions = new Float32Array(partCount * 3);
     lineGeom.setAttribute("position", new THREE.BufferAttribute(linePositions, 3));
     
     const networkLines = new THREE.LineSegments(lineGeom, lineMat);
@@ -165,29 +165,32 @@ export default function HeroCanvas() {
       }
       particles.geometry.attributes.position.needsUpdate = true;
 
-      // Connect near particles dynamically
-      const linePositionsArr = [];
-      for (let i = 0; i < partCount; i++) {
+      // Connect near particles dynamically into preallocated buffer (zero GC overhead)
+      let lineIdx = 0;
+      for (let i = 0; i < partCount && lineIdx < maxLines * 6; i++) {
         const x1 = posArr[i * 3];
         const y1 = posArr[i * 3 + 1];
         const z1 = posArr[i * 3 + 2];
 
-        for (let j = i + 1; j < partCount; j++) {
+        for (let j = i + 1; j < partCount && lineIdx < maxLines * 6; j++) {
           const x2 = posArr[j * 3];
           const y2 = posArr[j * 3 + 1];
           const z2 = posArr[j * 3 + 2];
 
           const d = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2);
           if (d < 30) {
-            linePositionsArr.push(x1, y1, z1, x2, y2, z2);
+            linePositions[lineIdx++] = x1;
+            linePositions[lineIdx++] = y1;
+            linePositions[lineIdx++] = z1;
+            linePositions[lineIdx++] = x2;
+            linePositions[lineIdx++] = y2;
+            linePositions[lineIdx++] = z2;
           }
         }
       }
 
-      const connectedGeom = new THREE.BufferGeometry();
-      connectedGeom.setAttribute("position", new THREE.Float32BufferAttribute(linePositionsArr, 3));
-      networkLines.geometry.dispose();
-      networkLines.geometry = connectedGeom;
+      lineGeom.setDrawRange(0, lineIdx / 3);
+      lineGeom.attributes.position.needsUpdate = true;
 
       // Update energy waves (sine wave shape)
       const waveArr = energyWave.geometry.attributes.position.array;

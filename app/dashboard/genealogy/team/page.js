@@ -120,7 +120,7 @@ export default function DownlineTeamPage() {
             </div>
           )}
 
-          <table className="w-full text-left text-sm border-collapse">
+          <table className="w-full text-left text-sm border-collapse min-w-[600px]">
             <thead>
               <tr className="border-b border-gft-border-dark text-[11px] font-extrabold uppercase tracking-wider text-white/45 bg-white/5">
                 <th className="py-3.5 px-4 rounded-l-xl">Member ID</th>

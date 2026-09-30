@@ -55,7 +55,7 @@ export default function DashboardLayout({ children }) {
           setIsMobileOpen={setIsMobileOpen}
         />
         
-        <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto pb-16">
+        <main className="flex-1 p-3.5 sm:p-6 md:p-8 max-w-7xl w-full mx-auto pb-16">
           {children}
         </main>
       </div>

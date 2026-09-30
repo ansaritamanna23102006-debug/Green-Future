@@ -123,7 +123,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-gft-dark-bg via-[#072F2B] to-gft-deep p-6 overflow-hidden">
+    <div className="min-h-screen relative flex items-center justify-center bg-gradient-to-br from-gft-dark-bg via-[#072F2B] to-gft-deep p-4 sm:p-6 overflow-hidden">
       {/* Abstract Glowing Blobs */}
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-gft-primary/10 rounded-full blur-[150px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-gft-accent/10 rounded-full blur-[150px] pointer-events-none" />
@@ -131,16 +131,16 @@ export default function LoginPage() {
       {/* Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
-      <div className="w-full max-w-lg relative z-10 flex flex-col gap-8">
+      <div className="w-full max-w-lg relative z-10 flex flex-col gap-6 sm:gap-8">
         <div className="flex justify-center">
           <Link href="/">
-            <GFTLogo className="h-20 w-auto" light={true} />
+            <GFTLogo className="h-14 sm:h-20 w-auto" light={true} />
           </Link>
         </div>
 
         <div
           ref={cardRef}
-          className="glass-panel-dark p-8 sm:p-10 rounded-3xl glow-green opacity-0"
+          className="glass-panel-dark p-5 sm:p-8 md:p-10 rounded-3xl glow-green opacity-0 shadow-2xl"
         >
           <div className="flex flex-col gap-2 mb-8">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white">Welcome Back</h1>
