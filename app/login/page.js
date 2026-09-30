@@ -81,6 +81,9 @@ export default function LoginPage() {
 
     // Always show generic message to avoid account enumeration
     setForgotSuccess(res.message || "If this account exists, a 6-digit verification code has been sent.");
+    if (res.devOtp) {
+      setForgotOtp(res.devOtp);
+    }
     setForgotStep(2);
   };
 
