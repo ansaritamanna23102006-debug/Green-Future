@@ -7,23 +7,29 @@ import {
 
 const COLORS = ['#65B300', '#0A4D45', '#8CD83D', '#062F2D'];
 
-function ClientResponsiveContainer({ children, ...props }) {
+function ClientResponsiveContainer({ children, height = 280, ...props }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) {
-    return <div className="h-full w-full bg-gray-50/50 rounded-lg animate-pulse" />;
+    return <div style={{ height }} className="w-full bg-gray-50/50 dark:bg-white/5 rounded-lg animate-pulse" />;
   }
 
-  return <ResponsiveContainer minWidth={0} minHeight={0} {...props}>{children}</ResponsiveContainer>;
+  return (
+    <div className="w-full min-w-0" style={{ height, minHeight: height, position: 'relative' }}>
+      <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={height} {...props}>
+        {children}
+      </ResponsiveContainer>
+    </div>
+  );
 }
 
 export function RevenueChart({ data }) {
   return (
-    <div className="h-72 w-full">
-      <ClientResponsiveContainer width="100%" height="100%">
+    <div className="h-72 w-full min-w-0 min-h-[288px] relative">
+      <ClientResponsiveContainer height={280}>
         <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
           <defs>
             <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
@@ -47,8 +53,8 @@ export function RevenueChart({ data }) {
 
 export function RegistrationsChart({ data }) {
   return (
-    <div className="h-72 w-full">
-      <ClientResponsiveContainer width="100%" height="100%">
+    <div className="h-72 w-full min-w-0 min-h-[288px] relative">
+      <ClientResponsiveContainer height={280}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} barSize={30}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
           <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: '#9CA3AF' }} />
@@ -66,8 +72,8 @@ export function RegistrationsChart({ data }) {
 
 export function DistributionPieChart({ data }) {
   return (
-    <div className="h-72 w-full flex justify-center items-center">
-      <ClientResponsiveContainer width="100%" height="100%">
+    <div className="h-72 w-full min-w-0 min-h-[288px] flex justify-center items-center relative">
+      <ClientResponsiveContainer height={280}>
         <PieChart>
           <Pie
             data={data}

@@ -4,9 +4,18 @@ import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { Users, UserPlus, ShieldCheck, ArrowRight, Zap, Award, Star } from "lucide-react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import NetworkCanvas from "@/components/NetworkCanvas";
+
+const NetworkCanvas = dynamic(() => import("@/components/NetworkCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center text-white/40 text-xs">
+      Loading Network Matrix...
+    </div>
+  ),
+});
 
 const teamAcronym = [
   {

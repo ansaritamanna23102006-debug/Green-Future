@@ -3,10 +3,14 @@ import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import gsap from 'gsap';
 import { User, Lock, ArrowRight, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
-import CanvasBackground from '@/components/admin/CanvasBackground';
+import dynamic from 'next/dynamic';
 import GFTLogo from '@/components/GFTLogo';
 import { API_URL } from '@/lib/apiConfig';
 import { cn } from '@/lib/utils';
+
+const CanvasBackground = dynamic(() => import('@/components/admin/CanvasBackground'), {
+  ssr: false,
+});
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -85,7 +89,13 @@ export default function AdminLogin() {
 
   const handleQuickFillSuperAdmin = () => {
     setUsername('superadmin');
-    setPassword('AdminPass123!');
+    setPassword('admin123');
+    setError('');
+  };
+
+  const handleQuickFillAdmin = () => {
+    setUsername('admin');
+    setPassword('admin123');
     setError('');
   };
 
@@ -128,7 +138,7 @@ export default function AdminLogin() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   className="w-full bg-black/30 border border-white/15 text-white rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#65B300] focus:border-[#65B300] transition-all placeholder:text-gray-500"
-                  placeholder="superadmin or admin@greenfuturetech.com"
+                  placeholder="superadmin or admin"
                   required
                 />
               </div>
@@ -145,21 +155,29 @@ export default function AdminLogin() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-black/30 border border-white/15 text-white rounded-xl py-3 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#65B300] focus:border-[#65B300] transition-all placeholder:text-gray-500"
-                  placeholder="••••••••"
+                  placeholder="admin123"
                   required
                 />
               </div>
             </div>
 
             {/* Quick Demo Helper */}
-            <div className="pt-1">
+            <div className="pt-1 flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={handleQuickFillSuperAdmin}
-                className="text-[11px] text-[#8CD83D] hover:text-white flex items-center gap-1.5 transition-colors"
+                className="text-[11px] text-[#8CD83D] hover:text-white flex items-center gap-1 transition-colors px-2.5 py-1 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border border-white/10"
               >
-                <KeyRound size={13} />
-                <span>Use default Super Admin credentials</span>
+                <KeyRound size={12} />
+                <span>Superadmin (admin123)</span>
+              </button>
+              <button
+                type="button"
+                onClick={handleQuickFillAdmin}
+                className="text-[11px] text-[#8CD83D] hover:text-white flex items-center gap-1 transition-colors px-2.5 py-1 bg-white/5 hover:bg-white/10 rounded-lg cursor-pointer border border-white/10"
+              >
+                <KeyRound size={12} />
+                <span>Admin (admin123)</span>
               </button>
             </div>
 

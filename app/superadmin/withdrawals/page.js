@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import DataTable from '@/components/admin/DataTable';
-import { ArrowDownToLine, CheckCircle, XCircle, Clock, Search, ShieldCheck, Play, Eye } from 'lucide-react';
+import { ArrowDownToLine, CheckCircle, XCircle, Clock, Search, ShieldCheck, Play, Eye, Download } from 'lucide-react';
 import StatCard from '@/components/admin/StatCard';
+import { downloadCSV } from '@/lib/exportUtils';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
@@ -315,6 +316,27 @@ export default function WithdrawalsManagement() {
             Authoritative withdrawal reviews enforced via strict state transitions: REQUESTED &rarr; UNDER_REVIEW &rarr; APPROVED &rarr; PROCESSING &rarr; COMPLETED.
           </p>
         </div>
+        <button
+          onClick={() => {
+            const headers = ['Withdrawal ID', 'User ID', 'Amount', 'Currency', 'Method', 'Destination', 'Status', 'Date'];
+            const rows = filteredWithdrawals.map(w => [
+              w.withdrawalId || w._id,
+              w.userId,
+              w.amount,
+              w.currency || 'INR',
+              w.method || 'Bank Transfer',
+              w.destinationReference || '',
+              w.status,
+              w.createdAt ? new Date(w.createdAt).toISOString() : ''
+            ]);
+            downloadCSV(`GFT_Withdrawals_${new Date().toISOString().split('T')[0]}`, headers, rows);
+            setActionMessage({ type: 'success', text: 'Withdrawals records exported to CSV.' });
+            setTimeout(() => setActionMessage(null), 3000);
+          }}
+          className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-lg shadow-[#65B300]/20 cursor-pointer shrink-0"
+        >
+          <Download size={16} /> Export Withdrawals CSV
+        </button>
       </div>
 
       {actionMessage && (

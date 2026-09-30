@@ -49,6 +49,7 @@ export default function CMSManagement() {
   // Posters (Promotional Images)
   const [posters, setPosters] = useState(cmsContent?.posters || []);
   const [newPoster, setNewPoster] = useState({ title: '', image: '', category: 'Offers' });
+  const [saveBanner, setSaveBanner] = useState({ show: false, message: '', type: 'success' });
 
   const handleSave = () => {
     setIsSaving(true);
@@ -71,7 +72,8 @@ export default function CMSManagement() {
       updateRanks(rankList);
 
       setIsSaving(false);
-      alert('CMS Changes Saved Successfully!');
+      setSaveBanner({ show: true, message: 'All CMS changes, packages, and rank parameters saved and published successfully!', type: 'success' });
+      setTimeout(() => setSaveBanner({ show: false, message: '', type: 'success' }), 4000);
     }, 800);
   };
 
@@ -117,20 +119,28 @@ export default function CMSManagement() {
   };
 
   const addPosterItem = () => {
-    if (!newPoster.title || !newPoster.image) return;
+    if (!newPoster.title.trim()) {
+      setSaveBanner({ show: true, message: 'Please provide a title for the poster banner.', type: 'error' });
+      setTimeout(() => setSaveBanner({ show: false, message: '', type: 'success' }), 3000);
+      return;
+    }
     const item = {
       id: Date.now(),
-      title: newPoster.title,
-      image: newPoster.image,
+      title: newPoster.title.trim(),
+      image: newPoster.image.trim() || 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=600&auto=format&fit=crop',
       category: newPoster.category,
       status: 'Active'
     };
     setPosters([...posters, item]);
     setNewPoster({ title: '', image: '', category: 'Offers' });
+    setSaveBanner({ show: true, message: `Poster "${item.title}" added to active promo posters! Click "Save & Publish" to persist.`, type: 'success' });
+    setTimeout(() => setSaveBanner({ show: false, message: '', type: 'success' }), 4000);
   };
 
   const deletePosterItem = (id) => {
     setPosters(posters.filter(p => p.id !== id));
+    setSaveBanner({ show: true, message: 'Poster removed from list. Click "Save & Publish" to persist.', type: 'info' });
+    setTimeout(() => setSaveBanner({ show: false, message: '', type: 'success' }), 3000);
   };
 
   const sections = [
@@ -144,6 +154,18 @@ export default function CMSManagement() {
 
   return (
     <div className="flex flex-col gap-6 h-full min-h-[calc(100vh-120px)] p-6 bg-gray-50 dark:bg-black/5 flex-1">
+      {saveBanner.show && (
+        <div className={`p-4 rounded-xl text-xs font-bold flex items-center justify-between border ${
+          saveBanner.type === 'error'
+            ? 'bg-rose-500/10 border-rose-500 text-rose-500'
+            : saveBanner.type === 'info'
+            ? 'bg-blue-500/10 border-blue-500 text-blue-500'
+            : 'bg-[#65B300]/15 border-[#65B300] text-[#65B300] dark:text-[#8CD83D]'
+        }`}>
+          <span>{saveBanner.message}</span>
+          <button onClick={() => setSaveBanner({ show: false, message: '', type: 'success' })} className="text-gray-400 hover:text-white cursor-pointer ml-3">✕</button>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 shrink-0">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white flex items-center gap-3">

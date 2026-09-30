@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   ShieldCheck,
   TrendingUp,
@@ -17,15 +19,22 @@ import {
   CheckCircle2,
   Users2,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import HeroCanvas from "@/components/HeroCanvas";
 import { useApp } from "@/lib/context/AppContext";
 
-gsap.registerPlugin(ScrollTrigger);
+// Dynamic import of heavy 3D WebGL Canvas for peak initial loading performance
+const HeroCanvas = dynamic(() => import("@/components/HeroCanvas"), {
+  ssr: false,
+  loading: () => <div className="w-full h-full absolute inset-0 z-0 pointer-events-none" />,
+});
 
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 // Count Up Component using GSAP
 function CountUp({ end, duration = 1.5, suffix = "", prefix = "", isText = false }) {
@@ -42,7 +51,7 @@ function CountUp({ end, duration = 1.5, suffix = "", prefix = "", isText = false
       ease: "power2.out",
       onUpdate: () => {
         setCount(countRef.current.val);
-      }
+      },
     });
   }, [end, duration, isText]);
 
@@ -51,7 +60,7 @@ function CountUp({ end, duration = 1.5, suffix = "", prefix = "", isText = false
   }
 
   const formatted = Math.round(count).toLocaleString(undefined, {
-    maximumFractionDigits: 0
+    maximumFractionDigits: 0,
   });
 
   return (
@@ -63,57 +72,48 @@ function CountUp({ end, duration = 1.5, suffix = "", prefix = "", isText = false
   );
 }
 
-// FAQ Accordion Card (Uses GSAP Height Tween)
+// High-Performance FAQ Accordion with Framer Motion
 function FAQItem({ question, answer, isOpen, toggleOpen }) {
-  const contentRef = useRef(null);
-  const chevronRef = useRef(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      gsap.to(contentRef.current, { height: "auto", opacity: 1, duration: 0.3, ease: "power2.out" });
-      gsap.to(chevronRef.current, { rotate: 180, duration: 0.2 });
-    } else {
-      gsap.to(contentRef.current, { height: 0, opacity: 0, duration: 0.3, ease: "power2.inOut" });
-      gsap.to(chevronRef.current, { rotate: 0, duration: 0.2 });
-    }
-  }, [isOpen]);
-
   return (
-    <div className="border-b border-gft-gray-light dark:border-gft-border-dark py-4">
+    <div className="border-b border-gft-gray-light dark:border-gft-border-dark py-4 transition-colors">
       <button
         onClick={toggleOpen}
-        className="w-full flex justify-between items-center text-left py-2 focus:outline-none"
+        className="w-full flex justify-between items-center text-left py-2 focus:outline-none group cursor-pointer"
+        aria-expanded={isOpen}
       >
-        <span className="text-[17px] font-semibold text-gft-deep hover:text-gft-primary transition-colors">
+        <span className="text-[17px] font-semibold text-gft-deep group-hover:text-gft-primary transition-colors">
           {question}
         </span>
-        <div ref={chevronRef}>
-          <ChevronDown className="h-5 w-5 text-gft-primary" />
-        </div>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.28, ease: "easeInOut" }}
+        >
+          <ChevronDown className="h-5 w-5 text-gft-primary shrink-0" />
+        </motion.div>
       </button>
-      <div
-        ref={contentRef}
-        className="overflow-hidden"
-        style={{ height: 0, opacity: 0 }}
-      >
-        <p className="text-[15px] leading-relaxed text-gft-deep/70 pt-2 pb-4">
-          {answer}
-        </p>
-      </div>
+      <AnimatePresence initial={false}>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+            className="overflow-hidden"
+          >
+            <p className="text-[15px] leading-relaxed text-gft-deep/70 pt-2 pb-4">
+              {answer}
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
 export default function LandingPage() {
-  const { cmsContent, studentPackages, personalPackages, businessPackages } = useApp();
+  const { cmsContent } = useApp();
   const [activeFAQ, setActiveFAQ] = useState(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
-
-  const heroLeftRef = useRef(null);
-  const heroRightRef = useRef(null);
-  const cardsRef = useRef([]);
-  const roadmapStepsRef = useRef([]);
-  const testimonialContainerRef = useRef(null);
 
   const stats = [
     { label: "Ledger Engine", value: "Double-Entry", isText: true, icon: ShieldCheck },
@@ -128,29 +128,29 @@ export default function LandingPage() {
       description: "Unilevel referral structure rewarding direct sponsor relationships (Levels 1–3 Confirmed). Subject to final business plan activation.",
       benefit: "Rule Confirmed (L1–L3)",
       icon: Briefcase,
-      color: "from-emerald-500/10 to-teal-500/10"
+      color: "from-emerald-500/10 to-teal-500/10",
     },
     {
       title: "Team Binary Placement",
       description: "Authoritative binary tree placement engine and team volume tracking across Left and Right organizational wings.",
       benefit: "Pending Activation",
       icon: Users,
-      color: "from-green-500/10 to-emerald-600/10"
+      color: "from-green-500/10 to-emerald-600/10",
     },
     {
       title: "Turnover Rank Funds",
       description: "Leadership designations (Silver through Chairman) backed by verified turnover milestones.",
       benefit: "Rule Confirmed",
       icon: ShieldCheck,
-      color: "from-teal-600/10 to-gft-dark/10"
+      color: "from-teal-600/10 to-gft-dark/10",
     },
     {
       title: "Passive Turnover Tiers",
       description: "10-tier organizational performance recognition system for established community builders.",
       benefit: "Pending Activation",
       icon: Coins,
-      color: "from-gft-primary/10 to-gft-accent/10"
-    }
+      color: "from-gft-primary/10 to-gft-accent/10",
+    },
   ];
 
   const roadmapSteps = [
@@ -166,20 +166,17 @@ export default function LandingPage() {
       quote: "Every transaction is recorded via double-entry journal entries and ledger postings, ensuring mathematically balanced accounts with zero direct wallet tampering.",
       author: "Double-Entry Accounting Standard",
       role: "Financial Integrity Engine",
-      image: null
     },
     {
       quote: "Financial safety gates ensure that unconfirmed packages, withdrawal limits, or calculation tiers cannot execute live financial side-effects until client verification.",
       author: "Business Execution Gatekeeper",
       role: "Compliance & Safety Engine",
-      image: null
     },
     {
       quote: "Complete separation of Unilevel Sponsor Trees and Binary Placement Trees guarantees deterministic genealogy traversal and cycle-free organization.",
       author: "Genealogy Matrix Architecture",
       role: "Network Hierarchy Engine",
-      image: null
-    }
+    },
   ];
 
   const faqs = [
@@ -187,447 +184,489 @@ export default function LandingPage() {
     { q: "How is financial integrity maintained?", a: "All financial operations—including package activations, income allocations, and withdrawal reservations—are recorded through balanced journal entries where total debits strictly equal total credits." },
     { q: "What is the status of packages and return rates?", a: "Package prices and return rate configurations currently carry 'Requires Client Confirmation' status pending final business activation. Live purchasing and payouts are paused until confirmation." },
     { q: "How does the withdrawal process work?", a: "Withdrawals follow an auditable state machine (Requested → Under Review → Approved → Processing → Completed). Approved KYC verification and sufficient ledger-held balance are strictly required." },
-    { q: "Is KYC verification mandatory?", a: "Yes. All members must have their identity documents (Aadhaar, PAN, Bank Passbook) reviewed and approved before financial withdrawal requests or package activations can proceed." }
+    { q: "Is KYC verification mandatory?", a: "Yes. All members must have their identity documents (Aadhaar, PAN, Bank Passbook) reviewed and approved before financial withdrawal requests or package activations can proceed." },
   ];
 
-  // GSAP Animations on mount
-  useEffect(() => {
-    // Hero content entrance
-    gsap.fromTo(
-      heroLeftRef.current.children,
-      { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: "power2.out" }
-    );
-
-    gsap.fromTo(
-      heroRightRef.current,
-      { opacity: 0, scale: 0.95 },
-      { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out", delay: 0.4 }
-    );
-
-    // Floating animation on Right side mockups
-    gsap.to(heroRightRef.current, {
-      y: -12,
-      duration: 3,
-      repeat: -1,
-      yoyo: true,
-      ease: "sine.inOut"
-    });
-
-    // Scroll trigger for Opportunity Cards
-    gsap.fromTo(
-      cardsRef.current,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.8,
-        stagger: 0.15,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: "#opportunity",
-          start: "top 80%"
-        }
-      }
-    );
-
-    // Scroll trigger for Roadmap steps
-    roadmapStepsRef.current.forEach((step, sIdx) => {
-      const isEven = sIdx % 2 === 0;
-      gsap.fromTo(
-        step,
-        { opacity: 0, x: isEven ? -50 : 50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: step,
-            start: "top 85%"
-          }
-        }
-      );
-    });
-  }, []);
-
-  // Handle slide testimonial transition
   const handleTestimonialChange = (newIdx) => {
-    gsap.to(testimonialContainerRef.current, {
-      opacity: 0,
-      y: -15,
-      duration: 0.25,
-      onComplete: () => {
-        setActiveTestimonial(newIdx);
-        gsap.fromTo(
-          testimonialContainerRef.current,
-          { opacity: 0, y: 15 },
-          { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
-        );
-      }
-    });
+    setActiveTestimonial(newIdx);
   };
 
   return (
     <div className="flex flex-col min-h-screen bg-gft-light overflow-x-hidden selection:bg-gft-primary selection:text-white">
-          <Navbar />
+      <Navbar />
 
-          {/* Hero Section */}
-          <section className="relative min-h-screen flex items-center pt-24 pb-20 bg-gradient-to-b from-gft-dark-bg via-[#082E2B] to-[#031412] text-white">
-            {/* 3D WebGL Globe & Particle Shell Background */}
-            <HeroCanvas />
+      <main className="flex-1">
+        {/* Hero Section */}
+        <section className="relative min-h-[92vh] flex items-center pt-28 pb-20 bg-gradient-to-b from-gft-dark-bg via-[#082E2B] to-[#031412] text-white overflow-hidden">
+          {/* 3D WebGL Globe & Particle Shell Background (Dynamically Loaded) */}
+          <HeroCanvas />
 
-            {/* Ambient Glows */}
-            <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gft-primary/15 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gft-accent/10 rounded-full blur-[120px] pointer-events-none" />
+          {/* Ambient Lighting Gradients */}
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gft-primary/15 rounded-full blur-[140px] pointer-events-none" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gft-accent/10 rounded-full blur-[140px] pointer-events-none" />
 
-            <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-              {/* Hero Left Content */}
-              <div ref={heroLeftRef} className="lg:col-span-7 flex flex-col items-start gap-6 text-left">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-gft-accent text-[13px] font-bold tracking-wider uppercase backdrop-blur-sm">
-                  <Zap className="h-4 w-4 fill-gft-accent text-gft-accent animate-pulse" /> Next-Gen Network Marketing Platform
-                </div>
+          <div className="max-w-7xl mx-auto px-6 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            {/* Hero Left Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-7 flex flex-col items-start gap-6 text-left"
+            >
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-gft-accent text-[13px] font-bold tracking-wider uppercase backdrop-blur-sm"
+              >
+                <Zap className="h-4 w-4 fill-gft-accent text-gft-accent animate-pulse" /> Next-Gen Network Marketing Platform
+              </motion.div>
 
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
-                  {cmsContent?.hero?.title || "Green Future Tech"}
-                </h1>
- 
-                <p className="text-lg sm:text-xl text-white/80 max-w-xl font-normal leading-relaxed">
-                  {cmsContent?.hero?.subtitle || "Empowering Your Green Future & Sustaining Tomorrow."}
-                </p>
- 
-                <div className="flex flex-wrap gap-4 mt-4 w-full sm:w-auto">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
+                {cmsContent?.hero?.title || "Green Future Tech"}
+              </h1>
+
+              <p className="text-lg sm:text-xl text-white/80 max-w-xl font-normal leading-relaxed">
+                {cmsContent?.hero?.subtitle || "Empowering Your Green Future & Sustaining Tomorrow through Decentralized Fintech Solutions."}
+              </p>
+
+              <div className="flex flex-wrap gap-4 mt-2 w-full sm:w-auto">
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                   <Link
                     href={cmsContent?.hero?.primaryBtnLink || "/register"}
-                    className="w-full sm:w-auto text-center bg-gft-primary hover:bg-gft-accent text-white text-[15px] font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 transition-all shadow-lg shadow-gft-primary/25 hover:shadow-gft-accent/25 hover:-translate-y-0.5"
+                    className="w-full sm:w-auto text-center bg-gft-primary hover:bg-gft-accent text-white text-[15px] font-bold px-8 py-4 rounded-full flex items-center justify-center gap-2 transition-all shadow-lg shadow-gft-primary/30"
                   >
-                    {cmsContent?.hero?.primaryBtn || "Join Now"}
+                    <span>{cmsContent?.hero?.primaryBtn || "Join Now"}</span>
                     <ArrowRight className="h-4 w-4" />
                   </Link>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full sm:w-auto">
                   <Link
                     href={cmsContent?.hero?.secondaryBtnLink || "/business-plan"}
                     className="w-full sm:w-auto text-center bg-white/5 hover:bg-white/10 border border-white/15 text-white text-[15px] font-bold px-8 py-4 rounded-full transition-all backdrop-blur-sm flex justify-center items-center"
                   >
-                    {cmsContent?.hero?.secondaryBtn || "View Plan"}
+                    <span>{cmsContent?.hero?.secondaryBtn || "View Plan"}</span>
                   </Link>
-                </div>
-
-                {/* Quick trust metrics */}
-                <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 sm:pt-8 mt-4 border-t border-white/10 w-full max-w-lg">
-                  <div>
-                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Double-Entry</h4>
-                    <p className="text-white/60 text-[10px] sm:text-xs">Immutable Ledger</p>
-                  </div>
-                  <div>
-                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Verified</h4>
-                    <p className="text-white/60 text-[10px] sm:text-xs">KYC Gatekeeper</p>
-                  </div>
-                  <div>
-                    <h4 className="text-base sm:text-xl font-bold text-gft-accent">Role-Based</h4>
-                    <p className="text-white/60 text-[10px] sm:text-xs">Security Arch</p>
-                  </div>
-                </div>
+                </motion.div>
               </div>
 
-              {/* Hero Right Graphic */}
-              <div ref={heroRightRef} className="lg:col-span-5 flex justify-center items-center relative">
-                {/* 3D Fintech/Network SVG Graphic */}
-                <div className="relative w-full max-w-[450px] aspect-square">
-                  <svg className="w-full h-full drop-shadow-[0_15px_40px_rgba(101,179,0,0.25)]" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="250" cy="250" r="220" stroke="#0A4D45" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
-                    <circle cx="250" cy="250" r="170" stroke="#65B300" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
-                    <circle cx="250" cy="250" r="110" stroke="#8CD83D" strokeWidth="2" opacity="0.15" />
-
-                    <line x1="250" y1="80" x2="130" y2="190" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="250" y1="80" x2="370" y2="190" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="130" y1="190" x2="130" y2="330" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="370" y1="190" x2="370" y2="330" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="130" y1="330" x2="250" y2="420" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="370" y1="330" x2="250" y2="420" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
-                    <line x1="250" y1="80" x2="250" y2="250" stroke="#8CD83D" strokeWidth="2" />
-                    <line x1="130" y1="190" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
-                    <line x1="370" y1="190" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
-                    <line x1="130" y1="330" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
-                    <line x1="370" y1="330" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
-
-                    <defs>
-                      <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                        <stop offset="0%" stopColor="#8CD83D" stopOpacity="0.8" />
-                        <stop offset="100%" stopColor="#8CD83D" stopOpacity="0" />
-                      </radialGradient>
-                    </defs>
-
-                    <circle cx="250" cy="80" r="30" fill="url(#glow)" opacity="0.5" />
-                    <circle cx="250" cy="250" r="50" fill="url(#glow)" opacity="0.3" />
-
-                    <rect x="215" y="215" width="70" height="70" rx="35" fill="#0A4D45" stroke="#65B300" strokeWidth="4" />
-                    <path d="M250 230L265 245H235L250 230Z" fill="#8CD83D" />
-                    <rect x="240" y="250" width="20" height="20" rx="3" fill="#65B300" />
-
-                    <circle cx="250" cy="80" r="14" fill="#65B300" stroke="#FFFFFF" strokeWidth="3" />
-                    <circle cx="130" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />
-                    <circle cx="370" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />
-                    <circle cx="130" cy="330" r="12" fill="#65B300" stroke="#FFFFFF" strokeWidth="2.5" />
-                    <circle cx="370" cy="330" r="12" fill="#65B300" stroke="#FFFFFF" strokeWidth="2.5" />
-                    <circle cx="250" cy="420" r="14" fill="#0A4D45" stroke="#8CD83D" strokeWidth="3" />
-
-                    <g opacity="0.85">
-                      <rect x="300" y="280" width="120" height="70" rx="10" fill="#082F2C" stroke="#104C48" strokeWidth="1" />
-                      <path d="M315 330L335 315L355 325L395 295" stroke="#8CD83D" strokeWidth="2.5" strokeLinecap="round" />
-                      <circle cx="395" cy="295" r="3" fill="#8CD83D" />
-                      <text x="315" y="303" fill="#FFFFFF" fontSize="9" fontWeight="bold" fontFamily="sans-serif">GFT Engine</text>
-                      <text x="315" y="340" fill="#8CD83D" fontSize="8" fontFamily="sans-serif">Audited</text>
-                    </g>
-                  </svg>
+              {/* Quick trust metrics */}
+              <div className="grid grid-cols-3 gap-2 sm:gap-6 pt-6 sm:pt-8 mt-2 border-t border-white/10 w-full max-w-lg">
+                <div>
+                  <h4 className="text-base sm:text-xl font-bold text-gft-accent">Double-Entry</h4>
+                  <p className="text-white/60 text-[10px] sm:text-xs">Immutable Ledger</p>
+                </div>
+                <div>
+                  <h4 className="text-base sm:text-xl font-bold text-gft-accent">Verified</h4>
+                  <p className="text-white/60 text-[10px] sm:text-xs">KYC Gatekeeper</p>
+                </div>
+                <div>
+                  <h4 className="text-base sm:text-xl font-bold text-gft-accent">Role-Based</h4>
+                  <p className="text-white/60 text-[10px] sm:text-xs">Security Arch</p>
                 </div>
               </div>
-            </div>
-          </section>
+            </motion.div>
 
-          {/* About Company Section */}
-          <section id="about" className="py-24 bg-white relative">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Our Foundation</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  {cmsContent?.about?.heading || "Fusing Green Innovation with Network Architecture"}
-                </h2>
-                <p className="text-gft-deep/75 text-[16px] leading-relaxed">
-                  {cmsContent?.about?.description || "Green Future Technology is an enterprise software platform engineered with an immutable double-entry accounting engine, strict KYC compliance gates, and auditable network compensation structures."}
+            {/* Hero Right Graphic */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-5 flex justify-center items-center relative"
+            >
+              <motion.div
+                animate={{ y: [-8, 8, -8] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+                className="relative w-full max-w-[450px] aspect-square"
+              >
+                <svg className="w-full h-full drop-shadow-[0_15px_40px_rgba(101,179,0,0.25)]" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="250" cy="250" r="220" stroke="#0A4D45" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
+                  <circle cx="250" cy="250" r="170" stroke="#65B300" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
+                  <circle cx="250" cy="250" r="110" stroke="#8CD83D" strokeWidth="2" opacity="0.15" />
+
+                  <line x1="250" y1="80" x2="130" y2="190" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="250" y1="80" x2="370" y2="190" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="130" y1="190" x2="130" y2="330" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="370" y1="190" x2="370" y2="330" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="130" y1="330" x2="250" y2="420" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="370" y1="330" x2="250" y2="420" stroke="#65B300" strokeWidth="1.5" opacity="0.5" />
+                  <line x1="250" y1="80" x2="250" y2="250" stroke="#8CD83D" strokeWidth="2" />
+                  <line x1="130" y1="190" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
+                  <line x1="370" y1="190" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
+                  <line x1="130" y1="330" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
+                  <line x1="370" y1="330" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
+
+                  <defs>
+                    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="#8CD83D" stopOpacity="0.8" />
+                      <stop offset="100%" stopColor="#8CD83D" stopOpacity="0" />
+                    </radialGradient>
+                  </defs>
+
+                  <circle cx="250" cy="80" r="30" fill="url(#glow)" opacity="0.5" />
+                  <circle cx="250" cy="250" r="50" fill="url(#glow)" opacity="0.3" />
+
+                  <rect x="215" y="215" width="70" height="70" rx="35" fill="#0A4D45" stroke="#65B300" strokeWidth="4" />
+                  <path d="M250 230L265 245H235L250 230Z" fill="#8CD83D" />
+                  <rect x="240" y="250" width="20" height="20" rx="3" fill="#65B300" />
+
+                  <circle cx="250" cy="80" r="14" fill="#65B300" stroke="#FFFFFF" strokeWidth="3" />
+                  <circle cx="130" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />
+                  <circle cx="370" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />
+                  <circle cx="130" cy="330" r="12" fill="#65B300" stroke="#FFFFFF" strokeWidth="2.5" />
+                  <circle cx="370" cy="330" r="12" fill="#65B300" stroke="#FFFFFF" strokeWidth="2.5" />
+                  <circle cx="250" cy="420" r="14" fill="#0A4D45" stroke="#8CD83D" strokeWidth="3" />
+
+                  <g opacity="0.85">
+                    <rect x="300" y="280" width="120" height="70" rx="10" fill="#082F2C" stroke="#104C48" strokeWidth="1" />
+                    <path d="M315 330L335 315L355 325L395 295" stroke="#8CD83D" strokeWidth="2.5" strokeLinecap="round" />
+                    <circle cx="395" cy="295" r="3" fill="#8CD83D" />
+                    <text x="315" y="303" fill="#FFFFFF" fontSize="9" fontWeight="bold" fontFamily="sans-serif">GFT Engine</text>
+                    <text x="315" y="340" fill="#8CD83D" fontSize="8" fontFamily="sans-serif">Audited</text>
+                  </g>
+                </svg>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* About Company Section */}
+        <section id="about" className="py-24 bg-white relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Our Foundation</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                {cmsContent?.about?.heading || "Fusing Green Innovation with Network Architecture"}
+              </h2>
+              <p className="text-gft-deep/75 text-[16px] leading-relaxed">
+                {cmsContent?.about?.description || "Green Future Technology is an enterprise software platform engineered with an immutable double-entry accounting engine, strict KYC compliance gates, and auditable network compensation structures."}
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Vision Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -8 }}
+                className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:shadow-xl duration-300 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
+                  <TrendingUp className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-bold text-gft-deep">Our Vision</h3>
+                <p className="text-gft-deep/70 text-[14px] leading-relaxed">
+                  {cmsContent?.about?.vision || "To be the most trusted and reliable service provider of smart saving solutions worldwide."}
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Vision Card */}
-                <div className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:-translate-y-2 duration-300 transition-all group">
-                  <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
-                    <TrendingUp className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gft-deep">Our Vision</h3>
-                  <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    {cmsContent?.about?.vision || "To be the most trusted and reliable service provider of smart saving solutions worldwide."}
-                  </p>
+              {/* Mission Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ y: -8 }}
+                className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:shadow-xl duration-300 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
+                  <ShieldCheck className="h-6 w-6" />
                 </div>
-
-                {/* Mission Card */}
-                <div className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:-translate-y-2 duration-300 transition-all group">
-                  <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
-                    <ShieldCheck className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gft-deep">Our Mission</h3>
-                  <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    {cmsContent?.about?.mission || "To provide financial freedom to 1 lakh people by 2030."}
-                  </p>
-                </div>
-
-                {/* Why GFT Card */}
-                <div className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:-translate-y-2 duration-300 transition-all group">
-                  <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
-                    <Zap className="h-6 w-6" />
-                  </div>
-                  <h3 className="text-xl font-bold text-gft-deep">Why Choose GFT</h3>
-                  <p className="text-gft-deep/70 text-[14px] leading-relaxed">
-                    GFT enforces rigorous ledger accounting principles where every financial transaction is backed by balanced double-entry journal postings with zero arbitrary mutations.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Packages Preview Section */}
-          <section id="packages-preview" className="py-24 bg-white border-t border-gft-gray-light relative">
-            <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gft-primary/5 rounded-full blur-[100px] pointer-events-none" />
-            <div className="max-w-7xl mx-auto px-6 relative z-10">
-              <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Startup Packages</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  GFT Startup Packages Overview
-                </h2>
-                <p className="text-gft-deep/75 text-[16px] leading-relaxed">
-                  Review startup package proposals. All package parameters currently carry &quot;Pending final business confirmation&quot; status and are paused for live execution.
+                <h3 className="text-xl font-bold text-gft-deep">Our Mission</h3>
+                <p className="text-gft-deep/70 text-[14px] leading-relaxed">
+                  {cmsContent?.about?.mission || "To provide financial freedom to 1 lakh people by 2030."}
                 </p>
-              </div>
+              </motion.div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* Student Preview */}
-                <div className="bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
-                  <div>
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Student Tiers</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹3,000 – ₹10,000</p>
-                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
-                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
-                    </div>
-                  </div>
-                  <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
-                    View Package Catalog <ArrowRight size={14} />
-                  </Link>
+              {/* Why GFT Card */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ y: -8 }}
+                className="bg-gft-light/50 border border-gft-gray-light p-8 rounded-2xl flex flex-col gap-5 hover:border-gft-primary/45 hover:shadow-xl duration-300 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-primary group-hover:bg-gft-primary group-hover:text-white transition-colors duration-300">
+                  <Zap className="h-6 w-6" />
                 </div>
-
-                {/* Personal Preview */}
-                <div className="bg-gradient-to-tr from-teal-500/5 to-gft-primary/5 border border-gft-primary/30 p-8 rounded-3xl flex flex-col justify-between shadow-md relative overflow-hidden group hover:shadow-xl transition-all">
-                  <div className="absolute top-4 right-4 bg-amber-500 text-white text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Unconfirmed</div>
-                  <div>
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Personal Tiers</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹20,000 – ₹40,000</p>
-                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
-                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
-                    </div>
-                  </div>
-                  <Link href="/packages" className="w-full text-center bg-gft-primary text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-accent transition-all shadow-md">
-                    View Package Catalog <ArrowRight size={14} />
-                  </Link>
-                </div>
-
-                {/* Business Preview */}
-                <div className="bg-gradient-to-tr from-amber-500/5 to-gft-primary/10 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary transition-all">
-                  <div>
-                    <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
-                    <h3 className="text-2xl font-black text-gft-deep mt-4">Business Tiers</h3>
-                    <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹50,000 – ₹1,00,000</p>
-                    <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
-                      <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
-                      <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
-                      <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
-                    </div>
-                  </div>
-                  <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
-                    View Package Catalog <ArrowRight size={14} />
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Business Opportunity Section */}
-          <section id="opportunity" className="py-24 bg-gft-light relative">
-            <div className="absolute top-1/2 left-0 w-80 h-80 bg-gft-accent/10 rounded-full blur-[100px] pointer-events-none" />
-
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Affiliate Plan</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Compensation & Network Architecture
-                </h2>
-                <p className="text-gft-deep/75 text-[16px]">
-                  GFT features four core compensation categories, structured to reward direct sponsors, network team builders, and leadership turnover.
+                <h3 className="text-xl font-bold text-gft-deep">Why Choose GFT</h3>
+                <p className="text-gft-deep/70 text-[14px] leading-relaxed">
+                  GFT enforces rigorous ledger accounting principles where every financial transaction is backed by balanced double-entry journal postings with zero arbitrary mutations.
                 </p>
-              </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                {opportunityCards.map((card, idx) => (
-                  <div
-                    key={idx}
-                    ref={(el) => (cardsRef.current[idx] = el)}
-                    className="bg-white/80 border border-white/60 p-6 rounded-2xl flex flex-col justify-between h-[300px] hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden group shadow-sm"
-                  >
-                    <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-30 group-hover:opacity-60 transition-opacity duration-300`} />
+        {/* Packages Preview Section */}
+        <section id="packages-preview" className="py-24 bg-white border-t border-gft-gray-light relative">
+          <div className="absolute top-1/4 left-1/4 w-80 h-80 bg-gft-primary/5 rounded-full blur-[100px] pointer-events-none" />
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Startup Packages</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                GFT Startup Packages Overview
+              </h2>
+              <p className="text-gft-deep/75 text-[16px] leading-relaxed">
+                Review startup package proposals. All package parameters currently carry &quot;Pending final business confirmation&quot; status and are paused for live execution.
+              </p>
+            </motion.div>
 
-                    <div className="relative z-10 flex flex-col gap-4">
-                      <div className="w-10 h-10 rounded-lg bg-gft-dark/10 flex items-center justify-center text-gft-dark">
-                        <card.icon className="h-5 w-5" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {/* Student Preview */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -6 }}
+                className="bg-gradient-to-tr from-emerald-500/5 to-teal-500/5 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary hover:shadow-xl transition-all"
+              >
+                <div>
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                  <h3 className="text-2xl font-black text-gft-deep mt-4">Student Tiers</h3>
+                  <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹3,000 – ₹10,000</p>
+                  <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                    <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                    <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                    <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
+                  </div>
+                </div>
+                <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                  View Package Catalog <ArrowRight size={14} />
+                </Link>
+              </motion.div>
+
+              {/* Personal Preview */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ y: -6 }}
+                className="bg-gradient-to-tr from-teal-500/5 to-gft-primary/5 border border-gft-primary/30 p-8 rounded-3xl flex flex-col justify-between shadow-md relative overflow-hidden group hover:shadow-xl transition-all"
+              >
+                <div className="absolute top-4 right-4 bg-amber-500 text-white text-[9px] font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider">Unconfirmed</div>
+                <div>
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                  <h3 className="text-2xl font-black text-gft-deep mt-4">Personal Tiers</h3>
+                  <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹20,000 – ₹40,000</p>
+                  <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                    <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                    <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                    <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
+                  </div>
+                </div>
+                <Link href="/packages" className="w-full text-center bg-gft-primary text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-accent transition-all shadow-md">
+                  View Package Catalog <ArrowRight size={14} />
+                </Link>
+              </motion.div>
+
+              {/* Business Preview */}
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ y: -6 }}
+                className="bg-gradient-to-tr from-amber-500/5 to-gft-primary/10 border border-gft-gray-light p-8 rounded-3xl flex flex-col justify-between shadow-sm relative overflow-hidden group hover:border-gft-primary hover:shadow-xl transition-all"
+              >
+                <div>
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 text-[10px] font-bold uppercase rounded-full tracking-wider">Pending Confirmation</span>
+                  <h3 className="text-2xl font-black text-gft-deep mt-4">Business Tiers</h3>
+                  <p className="text-gft-deep/60 text-xs mt-1">Official Plan: ₹50,000 – ₹1,00,000</p>
+                  <div className="border-t border-gft-gray-light/60 my-6 pt-6 flex flex-col gap-3 text-xs text-gft-deep/80">
+                    <div className="flex justify-between"><span>Status:</span><span className="font-bold text-amber-600">Pending Confirmation</span></div>
+                    <div className="flex justify-between"><span>Duration:</span><span className="font-bold">12 Months (Lock-in)</span></div>
+                    <div className="flex justify-between"><span>Execution:</span><span className="font-bold text-gft-deep/60">Paused</span></div>
+                  </div>
+                </div>
+                <Link href="/packages" className="w-full text-center bg-gft-dark text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 hover:bg-gft-deep transition-all">
+                  View Package Catalog <ArrowRight size={14} />
+                </Link>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Business Opportunity Section */}
+        <section id="opportunity" className="py-24 bg-gft-light relative">
+          <div className="absolute top-1/2 left-0 w-80 h-80 bg-gft-accent/10 rounded-full blur-[100px] pointer-events-none" />
+
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Affiliate Plan</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                Compensation & Network Architecture
+              </h2>
+              <p className="text-gft-deep/75 text-[16px]">
+                GFT features four core compensation categories, structured to reward direct sponsors, network team builders, and leadership turnover.
+              </p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+              {opportunityCards.map((card, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 35 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  whileHover={{ y: -8, scale: 1.02 }}
+                  className="bg-white/80 border border-white/60 p-6 rounded-2xl flex flex-col justify-between h-[300px] hover:shadow-xl transition-all duration-300 relative overflow-hidden group shadow-sm"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${card.color} opacity-30 group-hover:opacity-60 transition-opacity duration-300`} />
+
+                  <div className="relative z-10 flex flex-col gap-4">
+                    <div className="w-10 h-10 rounded-lg bg-gft-dark/10 flex items-center justify-center text-gft-dark group-hover:bg-gft-primary group-hover:text-white transition-colors">
+                      <card.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gft-deep">{card.title}</h3>
+                    <p className="text-gft-deep/70 text-[13px] leading-relaxed">
+                      {card.description}
+                    </p>
+                  </div>
+
+                  <div className="relative z-10 pt-4 border-t border-gft-deep/5 flex justify-between items-center">
+                    <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/45">Status</span>
+                    <span className="text-xs font-extrabold text-gft-primary">{card.benefit}</span>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Growth Roadmap Section */}
+        <section id="roadmap" className="py-24 bg-white relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto mb-20 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Your Journey</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                Step-by-Step Onboarding Roadmap
+              </h2>
+              <p className="text-gft-deep/75 text-[16px]">
+                Follow our structured compliance and acceleration path to establish your node in the network.
+              </p>
+            </motion.div>
+
+            {/* Timeline */}
+            <div className="relative">
+              <div className="absolute left-4 sm:left-8 lg:left-1/2 top-0 bottom-0 w-0.5 bg-gft-primary/20 -translate-x-1/2" />
+
+              <div className="flex flex-col gap-8 sm:gap-12">
+                {roadmapSteps.map((step, idx) => {
+                  const isEven = idx % 2 === 0;
+                  return (
+                    <motion.div
+                      key={idx}
+                      initial={{ opacity: 0, x: isEven ? -40 : 40 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true, margin: "-40px" }}
+                      transition={{ duration: 0.6, delay: 0.05 }}
+                      className={`flex flex-col lg:flex-row items-start ${isEven ? "" : "lg:flex-row-reverse"} relative`}
+                    >
+                      {/* Node Dot */}
+                      <div className="absolute left-4 sm:left-8 lg:left-1/2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border-4 border-gft-primary shadow-md -translate-x-1/2 flex items-center justify-center z-10">
+                        <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gft-primary" />
                       </div>
-                      <h3 className="text-lg font-bold text-gft-deep">{card.title}</h3>
-                      <p className="text-gft-deep/70 text-[13px] leading-relaxed">
-                        {card.description}
-                      </p>
-                    </div>
 
-                    <div className="relative z-10 pt-4 border-t border-gft-deep/5 flex justify-between items-center">
-                      <span className="text-xs uppercase font-bold tracking-wider text-gft-deep/45">Status</span>
-                      <span className="text-xs font-extrabold text-gft-primary">{card.benefit}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-
-          {/* Growth Roadmap Section */}
-          <section id="roadmap" className="py-24 bg-white relative overflow-hidden">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center max-w-3xl mx-auto mb-20 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Your Journey</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Step-by-Step Onboarding Roadmap
-                </h2>
-                <p className="text-gft-deep/75 text-[16px]">
-                  Follow our structured compliance and acceleration path to establish your node in the network.
-                </p>
-              </div>
-
-              {/* Timeline */}
-              <div className="relative">
-                <div className="absolute left-4 sm:left-8 lg:left-1/2 top-0 bottom-0 w-0.5 bg-gft-primary/20 -translate-x-1/2" />
-
-                <div className="flex flex-col gap-8 sm:gap-12">
-                  {roadmapSteps.map((step, idx) => {
-                    const isEven = idx % 2 === 0;
-                    return (
-                      <div key={idx} className={`flex flex-col lg:flex-row items-start ${isEven ? "" : "lg:flex-row-reverse"} relative`}>
-                        {/* Node Dot */}
-                        <div className="absolute left-4 sm:left-8 lg:left-1/2 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white border-4 border-gft-primary shadow-md -translate-x-1/2 flex items-center justify-center z-10">
-                          <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-gft-primary" />
-                        </div>
-
-                        {/* Content Box */}
-                        <div className={`w-full lg:w-1/2 pl-10 sm:pl-16 lg:pl-0 ${isEven ? "lg:pr-16 lg:text-right" : "lg:pl-16 lg:text-left"}`}>
-                          <div
-                            ref={(el) => (roadmapStepsRef.current[idx] = el)}
-                            className="bg-gft-light/50 border border-gft-gray-light p-5 sm:p-6 rounded-2xl block lg:inline-block w-full max-w-md shadow-sm"
-                          >
-                            <span className="text-2xl sm:text-3xl font-extrabold text-gft-primary/20 block mb-1">{step.step}</span>
-                            <h3 className="text-base sm:text-lg font-bold text-gft-deep mb-2">{step.title}</h3>
-                            <p className="text-gft-deep/70 text-xs sm:text-[13.5px] leading-relaxed">{step.desc}</p>
-                          </div>
+                      {/* Content Box */}
+                      <div className={`w-full lg:w-1/2 pl-10 sm:pl-16 lg:pl-0 ${isEven ? "lg:pr-16 lg:text-right" : "lg:pl-16 lg:text-left"}`}>
+                        <div className="bg-gft-light/50 border border-gft-gray-light p-5 sm:p-6 rounded-2xl block lg:inline-block w-full max-w-md shadow-sm hover:shadow-md transition-shadow">
+                          <span className="text-2xl sm:text-3xl font-extrabold text-gft-primary/20 block mb-1">{step.step}</span>
+                          <h3 className="text-base sm:text-lg font-bold text-gft-deep mb-2">{step.title}</h3>
+                          <p className="text-gft-deep/70 text-xs sm:text-[13.5px] leading-relaxed">{step.desc}</p>
                         </div>
                       </div>
-                    );
-                  })}
-                </div>
+                    </motion.div>
+                  );
+                })}
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Platform Architecture Statistics */}
-          <section className="py-20 bg-gft-dark text-white relative">
-            <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-              {stats.map((stat, idx) => {
-                const Icon = stat.icon;
-                return (
-                  <div key={idx} className="flex flex-col items-center text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm relative group hover:border-gft-primary transition-colors">
-                    <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-accent mb-4">
-                      <Icon className="h-6 w-6" />
-                    </div>
-                    <h3 className="text-2xl font-extrabold tracking-tight mb-2 text-white">
-                      <CountUp end={stat.value} prefix={stat.prefix || ""} suffix={stat.suffix || ""} isText={stat.isText} />
-                    </h3>
-                    <p className="text-white/60 text-sm font-medium">{stat.label}</p>
+        {/* Platform Architecture Statistics */}
+        <section className="py-20 bg-gft-dark text-white relative">
+          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {stats.map((stat, idx) => {
+              const Icon = stat.icon;
+              return (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 25 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                  whileHover={{ y: -6 }}
+                  className="flex flex-col items-center text-center p-6 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-sm relative group hover:border-gft-primary transition-colors"
+                >
+                  <div className="w-12 h-12 rounded-xl bg-gft-primary/10 flex items-center justify-center text-gft-accent mb-4 group-hover:scale-110 transition-transform">
+                    <Icon className="h-6 w-6" />
                   </div>
-                );
-              })}
-            </div>
-          </section>
+                  <h3 className="text-2xl font-extrabold tracking-tight mb-2 text-white">
+                    <CountUp end={stat.value} prefix={stat.prefix || ""} suffix={stat.suffix || ""} isText={stat.isText} />
+                  </h3>
+                  <p className="text-white/60 text-sm font-medium">{stat.label}</p>
+                </motion.div>
+              );
+            })}
+          </div>
+        </section>
 
-          {/* Architecture Principles Section */}
-          <section className="py-24 bg-white relative">
-            <div className="max-w-7xl mx-auto px-6">
-              <div className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Engine Integrity</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Engineering Principles & Standards
-                </h2>
-              </div>
+        {/* Architecture Principles Section */}
+        <section className="py-24 bg-white relative">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center max-w-3xl mx-auto mb-16 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Engine Integrity</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                Engineering Principles & Standards
+              </h2>
+            </motion.div>
 
-              <div className="max-w-4xl mx-auto relative px-8">
-                <div
-                  ref={testimonialContainerRef}
-                  className="bg-gft-light/50 border border-gft-gray-light p-10 sm:p-12 rounded-3xl relative text-center flex flex-col items-center gap-6"
+            <div className="max-w-4xl mx-auto relative px-8">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeTestimonial}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: "easeInOut" }}
+                  className="bg-gft-light/50 border border-gft-gray-light p-10 sm:p-12 rounded-3xl relative text-center flex flex-col items-center gap-6 shadow-sm"
                 >
                   <div className="w-16 h-16 rounded-2xl bg-gft-primary/10 border-2 border-gft-primary flex items-center justify-center text-gft-primary">
                     <ShieldCheck className="h-8 w-8" />
@@ -643,73 +682,101 @@ export default function LandingPage() {
                       {testimonials[activeTestimonial].role}
                     </p>
                   </div>
-                </div>
+                </motion.div>
+              </AnimatePresence>
 
-                {/* Slider Controls */}
-                <div className="flex justify-center gap-4 mt-8">
-                  <button
-                    onClick={() =>
-                      handleTestimonialChange(activeTestimonial === 0 ? testimonials.length - 1 : activeTestimonial - 1)
-                    }
-                    className="w-12 h-12 rounded-full border border-gft-gray-light flex items-center justify-center text-gft-deep hover:bg-gft-primary hover:text-white transition-colors cursor-pointer"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleTestimonialChange(activeTestimonial === testimonials.length - 1 ? 0 : activeTestimonial + 1)
-                    }
-                    className="w-12 h-12 rounded-full border border-gft-gray-light flex items-center justify-center text-gft-deep hover:bg-gft-primary hover:text-white transition-colors cursor-pointer"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
+              {/* Slider Controls */}
+              <div className="flex justify-center gap-4 mt-8">
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() =>
+                    handleTestimonialChange(activeTestimonial === 0 ? testimonials.length - 1 : activeTestimonial - 1)
+                  }
+                  className="w-12 h-12 rounded-full border border-gft-gray-light flex items-center justify-center text-gft-deep hover:bg-gft-primary hover:text-white transition-colors cursor-pointer"
+                  aria-label="Previous principle"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  whileHover={{ scale: 1.05 }}
+                  onClick={() =>
+                    handleTestimonialChange(activeTestimonial === testimonials.length - 1 ? 0 : activeTestimonial + 1)
+                  }
+                  className="w-12 h-12 rounded-full border border-gft-gray-light flex items-center justify-center text-gft-deep hover:bg-gft-primary hover:text-white transition-colors cursor-pointer"
+                  aria-label="Next principle"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </motion.button>
               </div>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* FAQ Section */}
-          <section id="faq" className="py-24 bg-gft-light relative">
-            <div className="max-w-4xl mx-auto px-6">
-              <div className="text-center mb-16 flex flex-col gap-4">
-                <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Questions & Answers</span>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
-                  Frequently Asked Questions
-                </h2>
-              </div>
+        {/* FAQ Section */}
+        <section id="faq" className="py-24 bg-gft-light relative">
+          <div className="max-w-4xl mx-auto px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 25 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="text-center mb-16 flex flex-col gap-4"
+            >
+              <span className="text-gft-primary font-bold text-sm tracking-wider uppercase">Questions & Answers</span>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-gft-deep">
+                Frequently Asked Questions
+              </h2>
+            </motion.div>
 
-              <div className="bg-white p-8 sm:p-10 rounded-3xl border border-gft-gray-light shadow-sm flex flex-col gap-2">
-                {faqs.map((faq, index) => (
-                  <FAQItem
-                    key={index}
-                    question={faq.q}
-                    answer={faq.a}
-                    isOpen={activeFAQ === index}
-                    toggleOpen={() => setActiveFAQ(activeFAQ === index ? null : index)}
-                  />
-                ))}
-              </div>
-            </div>
-          </section>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="bg-white p-8 sm:p-10 rounded-3xl border border-gft-gray-light shadow-sm flex flex-col gap-2"
+            >
+              {faqs.map((faq, index) => (
+                <FAQItem
+                  key={index}
+                  question={faq.q}
+                  answer={faq.a}
+                  isOpen={activeFAQ === index}
+                  toggleOpen={() => setActiveFAQ(activeFAQ === index ? null : index)}
+                />
+              ))}
+            </motion.div>
+          </div>
+        </section>
 
-          {/* CTA Section */}
-          <section className="py-20 bg-gradient-to-br from-gft-dark to-gft-deep text-white relative text-center">
-            <div className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-6">
-              <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Join Green Future Technology?</h2>
-              <p className="text-white/70 max-w-lg leading-relaxed text-[15px]">
-                Register your account to establish your node in the network hierarchy and review verified platform features.
-              </p>
+        {/* CTA Section */}
+        <section className="py-20 bg-gradient-to-br from-gft-dark to-gft-deep text-white relative text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl mx-auto px-6 flex flex-col items-center gap-6"
+          >
+            <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Join Green Future Technology?</h2>
+            <p className="text-white/70 max-w-lg leading-relaxed text-[15px]">
+              Register your account to establish your node in the network hierarchy and review verified platform features.
+            </p>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
               <Link
                 href="/register"
-                className="bg-gft-primary hover:bg-gft-accent text-white font-bold text-[15px] px-10 py-4 rounded-full flex items-center gap-2 shadow-lg transition-transform hover:-translate-y-0.5"
+                className="bg-gft-primary hover:bg-gft-accent text-white font-bold text-[15px] px-10 py-4 rounded-full flex items-center gap-2 shadow-lg shadow-gft-primary/25 transition-transform"
               >
-                Create Your Account
+                <span>Create Your Account</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
-            </div>
-          </section>
+            </motion.div>
+          </motion.div>
+        </section>
+      </main>
 
-          <Footer />
-        </div>
+      <Footer />
+    </div>
   );
 }

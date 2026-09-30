@@ -4,6 +4,8 @@ import { Settings, Save, Globe, Mail, CreditCard, Shield, Database, Bell } from 
 import { cn } from '@/lib/utils';
 import { useApp } from '@/lib/context/AppContext';
 
+import { downloadCSV } from '@/lib/exportUtils';
+
 export default function SettingsManagement() {
   const { cmsContent, updateCMSContent } = useApp();
   const [activeTab, setActiveTab] = useState('general');
@@ -14,8 +16,12 @@ export default function SettingsManagement() {
     companyName: 'Green Future Tech',
     email: cmsContent?.contact?.email || 'support@greenfuturetech.com',
     phone: cmsContent?.contact?.phone || '+91 98765 43210',
-    address: cmsContent?.contact?.address || 'GFT Headquarters, Eco-Park Tech Centre, Sector 5, Kolkata, West Bengal, India'
+    address: cmsContent?.contact?.address || 'GFT Headquarters, Eco-Park Tech Centre, Sector 5, Kolkata, West Bengal, India',
+    usdtAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+    minWithdrawalINR: 500,
+    withdrawalFeePercent: 5,
   });
+  const [successMessage, setSuccessMessage] = useState(null);
 
   const handleSave = () => {
     setIsSaving(true);
@@ -27,11 +33,31 @@ export default function SettingsManagement() {
           email: generalForm.email,
           phone: generalForm.phone,
           address: generalForm.address
+        },
+        paymentSettings: {
+          usdtAddress: generalForm.usdtAddress,
+          minWithdrawalINR: generalForm.minWithdrawalINR,
+          withdrawalFeePercent: generalForm.withdrawalFeePercent,
         }
       });
       setIsSaving(false);
-      alert('Global settings saved successfully!');
-    }, 800);
+      setSuccessMessage('Global site settings and payment channels updated successfully.');
+      setTimeout(() => setSuccessMessage(null), 3500);
+    }, 600);
+  };
+
+  const handleExportSettings = () => {
+    const exportRows = [
+      { Parameter: 'Company Name', Value: generalForm.companyName },
+      { Parameter: 'Support Email', Value: generalForm.email },
+      { Parameter: 'Contact Phone', Value: generalForm.phone },
+      { Parameter: 'Office Address', Value: generalForm.address },
+      { Parameter: 'USDT TRC-20 Receiving Address', Value: generalForm.usdtAddress },
+      { Parameter: 'Minimum Withdrawal INR', Value: `₹${generalForm.minWithdrawalINR}` },
+      { Parameter: 'Withdrawal Processing Fee', Value: `${generalForm.withdrawalFeePercent}%` },
+      { Parameter: 'Export Date', Value: new Date().toISOString() },
+    ];
+    downloadCSV(exportRows, `gft-system-settings-${new Date().toISOString().slice(0, 10)}.csv`);
   };
 
   const tabs = [
@@ -49,15 +75,30 @@ export default function SettingsManagement() {
           </h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Configure support lines and platform variables.</p>
         </div>
-        <button 
-          onClick={handleSave}
-          disabled={isSaving}
-          className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-6 py-3 rounded-xl text-sm font-bold transition-colors flex items-center gap-2 shadow-lg shadow-[#65B300]/20 disabled:opacity-70 cursor-pointer"
-        >
-          {isSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <Save size={16} />}
-          {isSaving ? 'Saving...' : 'Save Settings'}
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={handleExportSettings}
+            className="bg-white dark:bg-[#062F2D] border border-gray-200 dark:border-[#0A4D45] hover:bg-gray-50 dark:hover:bg-[#0A4D45] text-gray-700 dark:text-white px-4 py-2.5 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+          >
+            Export Config CSV
+          </button>
+          <button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-6 py-2.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 shadow-lg shadow-[#65B300]/20 disabled:opacity-70 cursor-pointer"
+          >
+            {isSaving ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span> : <Save size={16} />}
+            {isSaving ? 'Saving...' : 'Save Settings'}
+          </button>
+        </div>
       </div>
+
+      {successMessage && (
+        <div className="p-3.5 bg-green-50 border border-green-200 text-green-800 rounded-xl text-sm font-medium animate-in fade-in flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-green-500" />
+          {successMessage}
+        </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 text-black dark:text-white">
         {/* Sidebar Nav */}
@@ -143,10 +184,35 @@ export default function SettingsManagement() {
               <div className="space-y-6 max-w-2xl">
                 <div className="bg-gray-50 dark:bg-[#0A4D45]/30 p-4 rounded-xl border border-gray-200 dark:border-[#0A4D45]">
                   <h4 className="font-bold text-gray-800 dark:text-white flex items-center gap-2 mb-4">Crypto Payment Gateways</h4>
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div>
-                      <label className="block text-[9px] font-bold text-gray-500 uppercase mb-1">USDT TRC-20 System Address</label>
-                      <input type="text" defaultValue="TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t" className="w-full border border-gray-300 dark:border-[#0A4D45] rounded-lg px-4 py-2 bg-white dark:bg-[#0A4D45]/50 dark:text-white focus:ring-2 focus:ring-[#65B300] outline-none text-xs" />
+                      <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase mb-1">USDT TRC-20 System Address</label>
+                      <input 
+                        type="text" 
+                        value={generalForm.usdtAddress} 
+                        onChange={(e) => setGeneralForm({ ...generalForm, usdtAddress: e.target.value })}
+                        className="w-full border border-gray-300 dark:border-[#0A4D45] rounded-lg px-4 py-2 bg-white dark:bg-[#0A4D45]/50 dark:text-white focus:ring-2 focus:ring-[#65B300] outline-none text-xs font-mono" 
+                      />
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase mb-1">Minimum Withdrawal (INR)</label>
+                        <input 
+                          type="number" 
+                          value={generalForm.minWithdrawalINR} 
+                          onChange={(e) => setGeneralForm({ ...generalForm, minWithdrawalINR: Number(e.target.value) })}
+                          className="w-full border border-gray-300 dark:border-[#0A4D45] rounded-lg px-4 py-2 bg-white dark:bg-[#0A4D45]/50 dark:text-white focus:ring-2 focus:ring-[#65B300] outline-none text-xs" 
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-bold text-gray-600 dark:text-gray-300 uppercase mb-1">Processing Fee (%)</label>
+                        <input 
+                          type="number" 
+                          value={generalForm.withdrawalFeePercent} 
+                          onChange={(e) => setGeneralForm({ ...generalForm, withdrawalFeePercent: Number(e.target.value) })}
+                          className="w-full border border-gray-300 dark:border-[#0A4D45] rounded-lg px-4 py-2 bg-white dark:bg-[#0A4D45]/50 dark:text-white focus:ring-2 focus:ring-[#65B300] outline-none text-xs" 
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

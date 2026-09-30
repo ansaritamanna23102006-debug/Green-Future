@@ -15,9 +15,11 @@ import {
   ShieldAlert,
   ArrowRight,
   UserCheck,
-  Lock
+  Lock,
+  Download
 } from "lucide-react";
 import { useApp } from "@/lib/context/AppContext";
+import { downloadCSV } from "@/lib/exportUtils";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
@@ -189,6 +191,26 @@ export default function KYCManagement() {
     }
   };
 
+  const handleExportKYC = () => {
+    if (!queue || queue.length === 0) {
+      setFeedbackMsg({ type: "error", text: "No KYC entries in the current queue to export." });
+      return;
+    }
+    const exportData = queue.map(u => ({
+      UserId: u.userId,
+      Name: u.name,
+      Email: u.email,
+      Phone: u.phone,
+      KycStatus: u.kyc?.status || "NOT_STARTED",
+      AadhaarNumber: u.kyc?.aadhaarNumber ? `••••${u.kyc.aadhaarNumber.slice(-4)}` : "N/A",
+      PanNumber: u.kyc?.panNumber ? `••••${u.kyc.panNumber.slice(-4)}` : "N/A",
+      SubmittedAt: u.kyc?.submittedAt ? new Date(u.kyc.submittedAt).toLocaleDateString() : "N/A",
+      ReviewedBy: u.kyc?.reviewedBy || "Unassigned"
+    }));
+    downloadCSV(exportData, `gft-kyc-queue-${new Date().toISOString().slice(0, 10)}.csv`);
+    setFeedbackMsg({ type: "success", text: "KYC queue successfully exported as CSV." });
+  };
+
   return (
     <div className="flex flex-col gap-6 relative">
       {/* Header */}
@@ -203,7 +225,7 @@ export default function KYCManagement() {
           </p>
         </div>
 
-        {/* Filters */}
+        {/* Filters & Export */}
         <div className="flex flex-wrap items-center gap-2.5">
           <div className="relative">
             <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -231,10 +253,19 @@ export default function KYCManagement() {
 
           <button
             onClick={loadQueue}
-            className="p-2 bg-white dark:bg-[#062F2D] border border-gray-200 dark:border-[#0A4D45] rounded-xl text-gray-600 dark:text-gray-300 hover:text-[#65B300] transition-colors"
+            className="p-2 bg-white dark:bg-[#062F2D] border border-gray-200 dark:border-[#0A4D45] rounded-xl text-gray-600 dark:text-gray-300 hover:text-[#65B300] transition-colors cursor-pointer"
             title="Refresh queue"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
+          </button>
+
+          <button
+            onClick={handleExportKYC}
+            className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-3 py-1.5 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm cursor-pointer"
+            title="Export KYC queue"
+          >
+            <Download size={14} />
+            Export CSV
           </button>
         </div>
       </div>

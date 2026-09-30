@@ -1,11 +1,30 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import DataTable from '@/components/admin/DataTable';
-import { Package, ShieldAlert, Zap, Clock, Info, CheckCircle2 } from 'lucide-react';
+import { Package, ShieldAlert, Zap, Clock, Info, CheckCircle2, Download } from 'lucide-react';
 import { DISPLAY_PACKAGES } from '@/lib/businessPlanRules';
+import { downloadCSV } from '@/lib/exportUtils';
 
 export default function PackagesManagement() {
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
+
+  const handleExportPackages = () => {
+    const exportData = DISPLAY_PACKAGES.map(pkg => ({
+      PackageId: pkg.packageId,
+      Name: pkg.name,
+      Category: pkg.category,
+      OfficialPriceINR: pkg.officialPrice,
+      PrototypePriceINR: pkg.prototypePrice,
+      MonthlyROIPercent: `${pkg.monthlyPercentage}%`,
+      DurationMonths: pkg.durationMonths,
+      Status: pkg.confirmationStatus || 'Active'
+    }));
+    downloadCSV(exportData, `gft-packages-catalog-${new Date().toISOString().slice(0, 10)}.csv`);
+    setDownloadSuccess(true);
+    setTimeout(() => setDownloadSuccess(false), 3000);
+  };
+
   const columns = useMemo(() => [
     {
       accessorKey: 'packageId',
@@ -75,7 +94,20 @@ export default function PackagesManagement() {
             Authoritative package specifications and discrepancy matrix under Phase 0 governance.
           </p>
         </div>
+        <button
+          onClick={handleExportPackages}
+          className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 shadow-sm cursor-pointer"
+        >
+          <Download size={14} />
+          {downloadSuccess ? "Downloaded!" : "Export Catalog CSV"}
+        </button>
       </div>
+
+      {downloadSuccess && (
+        <div className="bg-[#65B300]/15 border border-[#65B300] text-[#65B300] dark:text-[#8CD83D] px-4 py-2.5 rounded-xl text-xs font-bold animate-fade-in flex items-center justify-between">
+          <span>✓ Authoritative Packages Catalog exported successfully!</span>
+        </div>
+      )}
 
       {/* Governance Notice */}
       <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-900 flex items-start gap-3 shadow-sm">

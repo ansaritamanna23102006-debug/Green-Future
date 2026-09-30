@@ -4,9 +4,18 @@ import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { ShieldCheck, Box, HelpCircle, ArrowRight, Eye, RefreshCw } from "lucide-react";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import InspectCanvas from "@/components/InspectCanvas";
+
+const InspectCanvas = dynamic(() => import("@/components/InspectCanvas"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center text-white/40 text-xs">
+      Loading 3D asset...
+    </div>
+  ),
+});
 
 const rewardsList = [
   {

@@ -8,8 +8,12 @@ import gsap from 'gsap';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
+import { downloadCSV } from '@/lib/exportUtils';
+import Link from 'next/link';
+
 export default function SuperAdminDashboard() {
   const feedRef = useRef(null);
+  const [downloadSuccess, setDownloadSuccess] = useState(false);
   const [supplyMetrics, setSupplyMetrics] = useState({
     totalSupply: 1000000000,
     availableSupply: 1000000000,
@@ -23,18 +27,50 @@ export default function SuperAdminDashboard() {
   });
   const [loadingSupply, setLoadingSupply] = useState(true);
 
+  const handleExportDashboardSummary = () => {
+    const summaryData = [
+      { Metric: "Total Supply (GFT)", Value: supplyMetrics.totalSupply },
+      { Metric: "Available Supply (GFT)", Value: supplyMetrics.availableSupply },
+      { Metric: "Reserved Tokens (Active IDs)", Value: supplyMetrics.reservedTokens },
+      { Metric: "Distributed Bonuses (GFT)", Value: supplyMetrics.distributedBonuses },
+      { Metric: "Returned Tokens (Inactive IDs)", Value: supplyMetrics.returnedTokens },
+      { Metric: "Active User IDs", Value: supplyMetrics.activeIds },
+      { Metric: "Inactive User IDs", Value: supplyMetrics.inactiveIds },
+      { Metric: "Total INR Withdrawals", Value: `₹${supplyMetrics.totalWithdrawalsINR}` },
+      { Metric: "Total USDT Withdrawals", Value: `$${supplyMetrics.totalWithdrawalsUSDT}` },
+      { Metric: "Total Users", Value: dashboardStats.totalUsers },
+      { Metric: "Packages Sold", Value: dashboardStats.totalPackagesSold },
+      { Metric: "Total Turnover", Value: `$${dashboardStats.totalTurnover}` },
+      { Metric: "Tokens Issued", Value: dashboardStats.totalTokensIssued },
+      { Metric: "Generated At", Value: new Date().toISOString() },
+    ];
+    downloadCSV(summaryData, `gft-dashboard-executive-summary-${new Date().toISOString().slice(0, 10)}.csv`);
+    setDownloadSuccess(true);
+    setTimeout(() => setDownloadSuccess(false), 3500);
+  };
+
   const fetchSupplyMetrics = async () => {
     try {
+      if (typeof window === "undefined") return;
       const token = localStorage.getItem("gft_token");
+      if (!token) {
+        setLoadingSupply(false);
+        return;
+      }
+
       const res = await fetch(`${API_URL}/admin/token-supply`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      if (!res.ok) {
+        setLoadingSupply(false);
+        return;
+      }
       const data = await res.json();
-      if (data.status === "success") {
+      if (data.status === "success" && data.data) {
         setSupplyMetrics(data.data);
       }
     } catch (err) {
-      console.warn("Failed to load token supply metrics:", err);
+      // Gracefully handle offline or network error without throwing uncaught noise
     } finally {
       setLoadingSupply(false);
     }
@@ -42,18 +78,20 @@ export default function SuperAdminDashboard() {
 
   useEffect(() => {
     fetchSupplyMetrics();
-    // Refresh every 10 seconds for real-time GFT supply tracking
-    const interval = setInterval(fetchSupplyMetrics, 10000);
+    // Refresh every 15 seconds for real-time GFT supply tracking
+    const interval = setInterval(fetchSupplyMetrics, 15000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     if (feedRef.current) {
       const items = feedRef.current.querySelectorAll('.feed-item');
-      gsap.fromTo(items, 
-        { x: 50, opacity: 0 }, 
-        { x: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.8, ease: 'power2.out' }
-      );
+      if (items && items.length > 0) {
+        gsap.fromTo(items, 
+          { x: 50, opacity: 0 }, 
+          { x: 0, opacity: 1, duration: 0.5, stagger: 0.1, delay: 0.8, ease: 'power2.out' }
+        );
+      }
     }
   }, []);
 
@@ -65,16 +103,32 @@ export default function SuperAdminDashboard() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-3">
         <div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Dashboard Overview</h1>
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Welcome back, Super Admin. Here's what's happening today.</p>
         </div>
-        <button className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2">
-          <ArrowUpRight size={16} />
-          Generate Report
-        </button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/superadmin/reports"
+            className="border border-gray-300 dark:border-[#0A4D45] text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#0A4D45] px-3.5 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            All Reports
+          </Link>
+          <button 
+            onClick={handleExportDashboardSummary}
+            className="bg-[#65B300] hover:bg-[#8CD83D] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 cursor-pointer shadow-sm"
+          >
+            <ArrowUpRight size={16} />
+            {downloadSuccess ? "Downloaded!" : "Generate Report"}
+          </button>
+        </div>
       </div>
+      {downloadSuccess && (
+        <div className="bg-[#65B300]/15 border border-[#65B300] text-[#65B300] dark:text-[#8CD83D] px-4 py-2 rounded-xl text-xs font-bold flex items-center justify-between animate-fade-in">
+          <span>✓ Executive Dashboard summary CSV exported successfully!</span>
+        </div>
+      )}
 
       {/* GFT Token Supply Management System Dashboard Section */}
       <div className="bg-white dark:bg-[#062F2D] p-6 rounded-xl border border-gray-100 dark:border-[#0A4D45] shadow-sm flex flex-col gap-4">
