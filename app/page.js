@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -21,6 +22,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Sparkles,
+  Leaf,
+  Globe,
 } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -267,18 +270,19 @@ export default function LandingPage() {
               </div>
             </motion.div>
 
-            {/* Hero Right Graphic */}
+            {/* Hero Right Graphic - Decentralized Network Architecture */}
             <motion.div
               initial={{ opacity: 0, scale: 0.92 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.3, duration: 1, ease: [0.16, 1, 0.3, 1] }}
-              className="lg:col-span-5 flex justify-center items-center relative"
+              className="lg:col-span-5 flex justify-center items-center relative select-none"
             >
               <motion.div
                 animate={{ y: [-8, 8, -8] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
-                className="relative w-full max-w-[450px] aspect-square"
+                className="relative w-full max-w-[450px] aspect-square flex items-center justify-center"
               >
+                {/* Decentralized Network Graphic with GFT Logo Centered */}
                 <svg className="w-full h-full drop-shadow-[0_15px_40px_rgba(101,179,0,0.25)]" viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="250" cy="250" r="220" stroke="#0A4D45" strokeWidth="1" strokeDasharray="5 5" opacity="0.3" />
                   <circle cx="250" cy="250" r="170" stroke="#65B300" strokeWidth="1.5" strokeDasharray="3 3" opacity="0.4" />
@@ -297,19 +301,33 @@ export default function LandingPage() {
                   <line x1="370" y1="330" x2="250" y2="250" stroke="#8CD83D" strokeWidth="1" opacity="0.5" />
 
                   <defs>
-                    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                    <radialGradient id="nodeGlow" cx="50%" cy="50%" r="50%">
                       <stop offset="0%" stopColor="#8CD83D" stopOpacity="0.8" />
                       <stop offset="100%" stopColor="#8CD83D" stopOpacity="0" />
                     </radialGradient>
+                    <clipPath id="centerLogoClip">
+                      <circle cx="250" cy="250" r="39" />
+                    </clipPath>
                   </defs>
 
-                  <circle cx="250" cy="80" r="30" fill="url(#glow)" opacity="0.5" />
-                  <circle cx="250" cy="250" r="50" fill="url(#glow)" opacity="0.3" />
+                  <circle cx="250" cy="80" r="30" fill="url(#nodeGlow)" opacity="0.5" />
+                  <circle cx="250" cy="250" r="55" fill="url(#nodeGlow)" opacity="0.35" />
 
-                  <rect x="215" y="215" width="70" height="70" rx="35" fill="#0A4D45" stroke="#65B300" strokeWidth="4" />
-                  <path d="M250 230L265 245H235L250 230Z" fill="#8CD83D" />
-                  <rect x="240" y="250" width="20" height="20" rx="3" fill="#65B300" />
+                  {/* Central Node Circle with glowing green border */}
+                  <circle cx="250" cy="250" r="42" fill="#0A4D45" stroke="#65B300" strokeWidth="4" />
 
+                  {/* GFT Logo Icon placed properly in this circle only */}
+                  <image
+                    href="/logo-icon.png"
+                    x="216"
+                    y="230"
+                    width="68"
+                    height="40"
+                    preserveAspectRatio="xMidYMid meet"
+                    clipPath="url(#centerLogoClip)"
+                  />
+
+                  {/* Network Peripheral Nodes */}
                   <circle cx="250" cy="80" r="14" fill="#65B300" stroke="#FFFFFF" strokeWidth="3" />
                   <circle cx="130" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />
                   <circle cx="370" cy="190" r="10" fill="#0A4D45" stroke="#8CD83D" strokeWidth="2.5" />

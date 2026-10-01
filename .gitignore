@@ -41,6 +41,17 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# testing
+/coverage
+tests/
+__tests__/
+*.test.js
+*.spec.js
 
-Green_Future_Tech_Website_Audit_Report.pdf
-Green Future Tech Full Plan.pdf
+# PDF Documents & Text Dumps
+*.pdf
+**/*.pdf
+*.PDF
+**/*.PDF
+pdf_extracted_text.txt
+*extracted_text*.txt

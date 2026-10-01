@@ -53,7 +53,6 @@ export default function RegisterPage() {
 
   // OTP State
   const [otpInput, setOtpInput] = useState("");
-  const [devCode, setDevCode] = useState("");
   const [verificationToken, setVerificationToken] = useState("");
   const [resendCooldown, setResendCooldown] = useState(0);
 
@@ -167,11 +166,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (res.success) {
-      setSuccessMsg(res.message || "Verification code dispatched to your email & mobile.");
-      if (res.devOtp) {
-        setDevCode(res.devOtp);
-        setOtpInput(res.devOtp);
-      }
+      setSuccessMsg(res.message || "Verification code dispatched to your email.");
       setResendCooldown(60);
       setStep(3);
     } else {
@@ -211,11 +206,7 @@ export default function RegisterPage() {
     setLoading(false);
 
     if (res.success) {
-      setSuccessMsg("A fresh 6-digit verification code has been dispatched.");
-      if (res.devOtp) {
-        setDevCode(res.devOtp);
-        setOtpInput(res.devOtp);
-      }
+      setSuccessMsg("A fresh 6-digit verification code has been dispatched to your email.");
       setResendCooldown(60);
     } else {
       setError(res.message || "Could not resend OTP at this time.");
@@ -519,21 +510,15 @@ export default function RegisterPage() {
                   </p>
                 </div>
 
-                {devCode && (
-                  <div className="w-full bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3 flex items-center justify-between text-xs text-emerald-300">
-                    <div className="flex items-center gap-2">
-                      <span className="bg-emerald-500/20 px-2 py-0.5 rounded font-mono font-bold text-emerald-200">DEV MODE</span>
-                      <span>Verification Code: <strong className="font-mono text-sm text-white">{devCode}</strong></span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setOtpInput(devCode)}
-                      className="underline text-emerald-300 hover:text-white font-semibold cursor-pointer"
-                    >
-                      Fill Code
-                    </button>
+                <div className="w-full bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3.5 flex items-start gap-3 text-xs text-emerald-200">
+                  <Mail className="h-5 w-5 text-gft-accent shrink-0 mt-0.5" />
+                  <div>
+                    <span className="font-semibold text-white block">Verification Code Sent</span>
+                    <p className="text-white/70 text-xs mt-0.5 leading-relaxed">
+                      Please check your Gmail / Email inbox at <strong className="text-white">{formData.email}</strong>. (Be sure to check your Spam or Promotions folder if you do not see it in your inbox).
+                    </p>
                   </div>
-                )}
+                </div>
 
                 <div className="flex flex-col gap-2 items-center">
                   <label className="text-xs uppercase font-bold tracking-wider text-white/70 self-start">
