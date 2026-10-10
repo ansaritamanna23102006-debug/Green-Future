@@ -5,7 +5,7 @@ import gsap from 'gsap';
 import { User, Lock, ArrowRight, ShieldCheck, KeyRound, AlertCircle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import GFTLogo from '@/components/GFTLogo';
-import { API_URL } from '@/lib/apiConfig';
+import { API_URL, setAuthTokens } from '@/lib/apiConfig';
 import { cn } from '@/lib/utils';
 
 const CanvasBackground = dynamic(() => import('@/components/admin/CanvasBackground'), {
@@ -69,8 +69,7 @@ export default function AdminLogin() {
       }
 
       // Persist authenticated tokens and state
-      localStorage.setItem('gft_token', accessToken);
-      if (refreshToken) localStorage.setItem('gft_refresh', refreshToken);
+      setAuthTokens(accessToken, refreshToken);
       localStorage.setItem('gft_auth', 'true');
       localStorage.setItem('gft_user', JSON.stringify(user));
 
